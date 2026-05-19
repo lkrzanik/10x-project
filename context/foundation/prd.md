@@ -4,86 +4,137 @@ version: 1
 status: draft
 created: 2026-05-19
 context_type: greenfield
-product_type: desktop
-target_scale: "# TODO: target_scale — see Open Questions"
-timeline_budget: "# TODO: timeline_budget — see Open Questions"
+product_type: "desktop"
+target_scale: "desktop-user"
+timeline_budget:
+  mvp_weeks: 6
+  hard_deadline: null
+  after_hours_only: true
 ---
 
 ## Vision & Problem Statement
 
-Długoterminowa analiza temperatury i wilgotności pomieszczenia oraz warunków pogodowych w celu zaproponowania optymalnego zestawu paneli fotowoltaicznych, inwertera i magazynu energii.
+Właściciel pomieszczenia potrzebuje wiarygodnej odpowiedzi, czy dane miejsce nadaje się pod zestaw fotowoltaiczny z magazynem energii, ale dziś musi ręcznie łączyć długoterminowe pomiary temperatury/wilgotności z osobnymi danymi pogodowymi. To wydłuża analizę, utrudnia wychwycenie ekstremów i zwiększa ryzyko błędnych decyzji przy wyborze technologii.
 
-Trudno ocenić, czy konkretne pomieszczenie nadaje się pod instalację fotowoltaiki i magazynu energii na podstawie długoterminowych warunków środowiskowych. Użytkownik potrzebuje jednego procesu, który łączy pomiary z urządzenia z danymi pogodowymi i przekłada je na decyzję wraz z uzasadnieniem.
+Wartość produktu wynika z automatycznej korelacji dwóch strumieni danych o różnych interwałach oraz przekształcenia ich w czytelny wniosek decyzyjny (nadaje się / nie nadaje się + dlaczego + rekomendacja technologii zestawu).
 
 ## User & Persona
 
-### Primary persona
-
-- Instalator / doradca OZE (użytkownik jednoosobowy, lokalna praca na jednym stanowisku).
-- Potrzebuje szybkiego importu danych pomiarowych, automatycznej korelacji z pogodą, widocznych ekstremów i raportu końcowego wspierającego decyzję techniczną.
+### Primary Persona
+- **Nazwa robocza:** Właściciel / opiekun techniczny pomieszczenia
+- **Rola:** Osoba analizująca warunki środowiskowe pod inwestycję PV
+- **Moment użycia:** Po zebraniu danych z urządzenia pomiarowego i przed decyzją o doborze technologii
+- **Aktualny koszt:** Ręczne porównywanie danych z wielu źródeł i brak spójnego raportu decyzyjnego
 
 ## Success Criteria
 
 ### Primary
-
-- Wszystkie dane z urządzenia pomiarowego są skorelowane z danymi pogodowymi.
-- Zgromadzone dane pozwalają na propozycję optymalnego zestawu paneli fotowoltaicznych, inwertera i magazynu energii.
+- Wszystkie rekordy pomiarowe z urządzenia są skorelowane z danymi pogodowymi mimo różnic interwałów czasowych.
+- Użytkownik może wygenerować raport AI zawierający: decyzję „nadaje się/nie nadaje się”, czynniki dyskwalifikujące (jeśli są) oraz rekomendowaną technologię zestawu inwerter + magazyn energii.
 
 ### Secondary
-
-- Użytkownik może dodać własne uwagi do rekordów pomiarowych.
-- Użytkownik może w dowolnym momencie wyświetlić wykres zależności między danymi pomiarowymi i pogodowymi.
+- Użytkownik może dodawać notatki tekstowe do każdego rekordu pomiarowego i uwzględniać je podczas interpretacji wyników.
+- Użytkownik otrzymuje wykres zależności danych pomiarowych i pogodowych do szybkiego przeglądu trendów.
 
 ### Guardrails
-
-- Produkt pozostaje aplikacją lokalną (bez zdalnego dostępu webowego) w zakresie MVP.
-- MVP nie wprowadza obsługi wielu użytkowników ani wielu lokalizacji.
+- Import i korelacja danych nie mogą pomijać rekordów bez jawnego oznaczenia braków.
+- Ekstremalne odczyty muszą być wizualnie wyróżnione i łatwe do odfiltrowania.
+- Zakres MVP nie obejmuje analizy liczby paneli ani pełnego modelu zapotrzebowania energetycznego.
 
 ## User Stories
 
-# TODO: user stories with Given/When/Then — see Open Questions
+### US-01: Import i korelacja danych środowiskowych
+
+- **Given** użytkownik posiada plik CSV z urządzenia pomiarowego i źródło danych pogodowych (API lub CSV)
+- **When** uruchamia import obu źródeł i zleca korelację
+- **Then** otrzymuje jednolity zestaw danych z przypisanymi danymi pogodowymi do rekordów pomiarowych
+
+#### Acceptance Criteria
+- Rekordy pomiarowe bez możliwego dopasowania pogodowego są jawnie oznaczone
+- Różne interwały czasowe są normalizowane według jawnej reguły dopasowania czasu
+- Użytkownik widzi liczbę rekordów wejściowych i skorelowanych
+
+### US-02: Analiza anomalii i kontekstu
+
+- **Given** dane zostały poprawnie skorelowane
+- **When** użytkownik przegląda wyniki na wykresie i dodaje notatki do rekordów
+- **Then** może szybko wskazać ekstremalne odczyty i opisać ich kontekst
+
+#### Acceptance Criteria
+- Ekstremalne odczyty są wyraźnie odróżnione wizualnie od pozostałych
+- Notatka może zostać przypisana do pojedynczego rekordu pomiarowego
+
+### US-03: Raport decyzyjny AI dla pomieszczenia
+
+- **Given** użytkownik ma skorelowane dane i ewentualne notatki
+- **When** wybiera generowanie raportu AI
+- **Then** dostaje ocenę nadaje się/nie nadaje się, czynniki dyskwalifikujące oraz rekomendację technologii inwertera i magazynu
+
+#### Acceptance Criteria
+- Raport zawiera sekcję decyzji binarnej oraz krótkie uzasadnienie
+- Raport wyraźnie oddziela wnioski od danych wejściowych
+- Raport jest dostępny jako plik PDF wygenerowany online
+- Raport nie obejmuje doboru liczby paneli PV
 
 ## Functional Requirements
 
-- FR-001: User can import a CSV file with timestamp, temperature, and humidity readings at fixed intervals. Priority: must-have
-- FR-002: User can receive validation feedback when imported CSV rows are incomplete or malformed. Priority: must-have
-- FR-003: User can correlate imported indoor measurements with weather data from an external service and persist synchronized results. Priority: must-have
-- FR-004: User can add and edit a text note for each measurement record. Priority: must-have
-- FR-005: User can view a chart showing relationships between indoor measurements and correlated weather data. Priority: must-have
-- FR-006: User can identify extreme readings highlighted in the interface. Priority: must-have
-- FR-007: User can generate a final report that states suitability, disqualifying factors, and a recommended inverter + storage technology. Priority: must-have
-- FR-008: User can receive suitability decisions only after the minimum required data horizon is met. Priority: must-have
+### Data Ingestion & Correlation
+- FR-001: Użytkownik może zaimportować plik CSV z urządzenia pomiarowego zawierający temperaturę i wilgotność w interwałach 30-minutowych. Priority: must-have
+  > Sokrates: Rozważono kontrargument: "format CSV z urządzenia może się zmieniać i import będzie kruchy". Rozwiązanie: zachowano FR; parser w MVP wspiera jeden jawnie opisany format wejściowy, a odchylenia są raportowane jako błąd walidacji.
+
+- FR-002: Użytkownik może dostarczyć dane pogodowe dla lokalizacji przez API zewnętrznego serwisu pogodowego lub przez import CSV pobrany ręcznie. Priority: must-have
+  > Sokrates: Rozważono kontrargument: "dwie ścieżki importu zwiększają złożoność MVP". Rozwiązanie: zachowano FR; obie ścieżki są krytyczne dla ciągłości pracy przy braku dostępu do API.
+
+- FR-003: System może automatycznie skorelować dane pomiarowe i pogodowe nawet gdy dane pogodowe mają inny interwał czasowy niż 30 minut. Priority: must-have
+  > Sokrates: Rozważono kontrargument: "agregacja/normalizacja czasu może zniekształcić wyniki". Rozwiązanie: zachowano FR; metoda korelacji i poziom dopasowania czasu muszą być jawnie raportowane użytkownikowi.
+
+### Analysis & Insight
+- FR-004: Użytkownik może dodać tekstową notatkę do każdego rekordu danych pomiarowych. Priority: must-have
+  > Sokrates: Rozważono kontrargument: "notatki na rekord mogą być kosztowne i rzadko używane". Rozwiązanie: zachowano FR jako must-have, ponieważ notatki są potrzebne do kontekstu anomalii.
+
+- FR-005: Użytkownik może wyświetlić wykres zależności między danymi z urządzenia i danymi pogodowymi na wspólnej osi czasu. Priority: must-have
+  > Sokrates: Rozważono kontrargument: "wykres może nie wnosić wartości ponad tabelę". Rozwiązanie: zachowano FR; szybka interpretacja trendu jest kluczowa dla decyzji inwestycyjnej.
+
+- FR-006: System może wykryć i wyróżnić ekstremalne odczyty z urządzenia pomiarowego w widocznym miejscu. Priority: must-have
+  > Sokrates: Rozważono kontrargument: "brak definicji ekstremum może dawać mylące alarmy". Rozwiązanie: zachowano FR; ekstremum definiowane przez konfigurowalne wartości min/max w ustawieniach aplikacji.
+
+### AI Report
+- FR-007: Użytkownik może wygenerować online raport AI w formacie PDF oparty na zebranych danych skorelowanych i notatkach. Priority: must-have
+  > Sokrates: Rozważono kontrargument: "jakość raportu AI będzie niestabilna bez dodatkowego nadzoru". Rozwiązanie: zachowano FR; raport jest wsparciem decyzyjnym i zawiera uzasadnienie.
+
+- FR-008: Raport AI może jednoznacznie stwierdzić, czy pomieszczenie nadaje się do rozwiązania PV (tak/nie). Priority: must-have
+  > Sokrates: Rozważono kontrargument: "decyzja binarna może upraszczać realny stan". Rozwiązanie: zachowano FR; decyzja binarna jest wymagana, ale musi być uzupełniona sekcją uzasadnienia.
+
+- FR-009: Raport AI może wskazać czynniki dyskwalifikujące i zaproponować ogólną klasę technologii zestawu inwertera z magazynem energii. Priority: must-have
+  > Sokrates: Rozważono kontrargument: "rekomendacja technologii bez modelu energii może być zbyt ogólna". Rozwiązanie: zachowano FR; zakres rekomendacji dotyczy typu technologii, nie ilości paneli ani pełnego sizingu instalacji.
 
 ## Non-Functional Requirements
 
-# TODO: non-functional measurable targets — see Open Questions
+- Import i korelacja danych powinny zwrócić wynik dla standardowego zestawu MVP bez zauważalnego opóźnienia blokującego pracę użytkownika.
+- Aplikacja powinna zapewnić pełną transparentność braków danych (żaden brak nie może zostać „ukryty”).
+- Raport AI powinien być reprodukowalny dla tego samego zestawu danych wejściowych i tej samej konfiguracji modelu.
+- Raport AI powinien być możliwy do wygenerowania online i eksportu do formatu PDF.
+- # TODO: ilościowe progi NFR (SLA/czas odpowiedzi) — see Open Questions
 
 ## Business Logic
 
-System klasyfikuje przydatność pomieszczenia do instalacji OZE na podstawie stabilności i ekstremów warunków środowiskowych oraz kontekstu pogodowego, a następnie mapuje wynik na rekomendowaną technologię zestawu.
+Aplikacja klasyfikuje przydatność pomieszczenia pod zestaw PV poprzez połączenie długoterminowych pomiarów środowiskowych z danymi pogodowymi i wyprowadzenie decyzji wraz z uzasadnieniem.
 
-Decyzja końcowa jest możliwa tylko przy minimalnym oknie danych (co najmniej N dni pomiarów). Przekroczenie progów krytycznych przez określony udział próbek może dyskwalifikować pomieszczenie. Duża zmienność temperatury i wilgotności obniża ocenę przydatności i wpływa na mapowanie rekomendacji technologii.
+Reguła konsumuje dane czasowe (temperatura, wilgotność, zachmurzenie) oraz notatki kontekstowe użytkownika, a wynikiem jest decyzja binarna i rekomendacja technologii zestawu inwerter + magazyn energii. Użytkownik styka się z tą regułą podczas generowania raportu AI po etapie korelacji danych.
 
 ## Access Control
 
-Single user; no auth; data lives on-device only.
+Single user; no auth; data processed in one local workspace for one operator in MVP.
 
 ## Non-Goals
 
-- Zdalny dostęp (aplikacja nie musi być stroną internetową) — aby utrzymać prosty, lokalny zakres MVP.
-- Zaawansowana edycja danych — aby ograniczyć MVP do importu, korelacji i analizy.
-- Obsługa wielu lokalizacji pomiarowych — aby skupić się na jednym kontekście pomiarowym.
-- Obsługa wielu użytkowników — aby uprościć model dostępu i przechowywania.
-- Analiza zapotrzebowania na energię i ilości potrzebnych paneli fotowoltaicznych — poza zakresem pierwszego wydania.
+- Brak zdalnego dostępu i hostowanej wersji webowej w MVP.
+- Brak zaawansowanej edycji danych pomiarowych i pogodowych w MVP.
+- Brak obsługi wielu lokalizacji pomiarowych.
+- Brak obsługi wielu użytkowników i ról.
+- Brak analizy zapotrzebowania energetycznego i brak doboru liczby paneli PV.
 
 ## Open Questions
 
-1. **What is `target_scale` (`users`, `qps`, `data_volume`) for this product?** — Owner: user. Block: no.
-2. **What is `timeline_budget` (`mvp_weeks`, `hard_deadline`, `after_hours_only`)?** — Owner: user. Block: no.
-3. **Please provide at least 2–3 MVP user stories in Given/When/Then format.** — Owner: user. Block: yes.
-4. **What measurable non-functional targets are required (e.g., latency, data retention, reliability, compatibility)?** — Owner: user. Block: yes.
-5. **Jaki minimalny horyzont danych (`N` dni) jest wymagany do decyzji?** — Owner: user. Block: yes.
-6. **Jakie dokładne progi ekstremów temperatury i wilgotności obowiązują?** — Owner: user. Block: yes.
-7. **Który zewnętrzny dostawca pogody jest źródłem referencyjnym?** — Owner: user. Block: yes.
-8. **Czy raport AI ma być obowiązkowy w MVP, czy może być etapem v1.1?** — Owner: user. Block: yes.
-9. **Czy rekomendacja technologii ma używać zamkniętego katalogu, czy wolnego tekstu?** — Owner: user. Block: no.
+1. **Czy projekt ma hard deadline biznesowy (konkretna data kalendarzowa)?** — Owner: user. Block: no (MVP: 6 tygodni po godzinach — confirmed).
+2. **Jakie ilościowe progi NFR obowiązują (np. czas odpowiedzi, maks. czas generacji raportu)?** — Owner: user. Block: no.
