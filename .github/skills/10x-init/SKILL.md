@@ -74,11 +74,11 @@ context/foundation/             [created|present]
 context/foundation/README.md    [created|present]
 ```
 
-Następnie jednoparograficzny przewodnik, do czego służy każdy katalog i gdzie szukać dalej:
+Następnie jeden akapit przewodnika, do czego służy każdy katalog i gdzie szukać dalej:
 
-- `context/changes/` przechowuje zmiany w toku. Uruchom `/10x-new`, aby utworzyć nowy folder zmian z plikiem tożsamości `change.md`.
+- `context/changes/` przechowuje zmiany w toku. Uruchom `/10x-new`, aby utworzyć nowy folder zmiany z plikiem tożsamości `change.md`.
 - `context/archive/` przechowuje ukończone zmiany. Uruchom `/10x-archive`, gdy zmiana zostanie zakończona — przeniesie ona folder z `changes/` do `archive/`.
-- `context/foundation/` przechowuje dokumenty żywe obejmujące wiele zmian. Nie ma tu stałej listy plików; dokumenty podstawowe są własnością umiejętności, które je zapisują (np. `/10x-prd` zapisuje `prd.md`, `/10x-tech-stack-selector` zapisuje `tech-stack.md`).
+- `context/foundation/` przechowuje żywe dokumenty obejmujące wiele zmian. Nie ma tu stałej listy plików; dokumenty podstawowe są własnością umiejętności, które je zapisują (np. `/10x-prd` zapisuje `prd.md`, `/10x-tech-stack-selector` zapisuje `tech-stack.md`).
 
 Stop. Nie łącz się z `/10x-new` ani żadną inną umiejętnością; użytkownik uruchamia je, gdy ma coś do zrobienia.
 
