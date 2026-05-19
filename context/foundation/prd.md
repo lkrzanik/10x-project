@@ -1,140 +1,153 @@
 ---
-project: "10xFotowoltaika"
-version: 1
-status: draft
-created: 2026-05-19
-context_type: greenfield
-product_type: "desktop"
-target_scale: "desktop-user"
-timeline_budget:
-  mvp_weeks: 6
-  hard_deadline: null
-  after_hours_only: true
+product_type: internal_tool
+language_family: dotnet
+target_scale: single_user
+timeline_budget: 6_weeks_solo
 ---
 
-## Vision & Problem Statement
+# PRD — 10xFotowoltaika MVP
 
-Właściciel pomieszczenia potrzebuje wiarygodnej odpowiedzi, czy dane miejsce nadaje się pod zestaw fotowoltaiczny z magazynem energii, ale dziś musi ręcznie łączyć długoterminowe pomiary temperatury/wilgotności z osobnymi danymi pogodowymi. To wydłuża analizę, utrudnia wychwycenie ekstremów i zwiększa ryzyko błędnych decyzji przy wyborze technologii.
+## 1. Przegląd produktu
 
-Wartość produktu wynika z automatycznej korelacji dwóch strumieni danych o różnych interwałach oraz przekształcenia ich w czytelny wniosek decyzyjny (nadaje się / nie nadaje się + dlaczego + rekomendacja technologii zestawu).
+10xFotowoltaika to wewnętrzna aplikacja webowa dla właściciela domu, służąca do długoterminowej analizy warunków klimatycznych pomieszczenia i pogody zewnętrznej. Na podstawie zgromadzonych danych (minimum 1 rok) aplikacja generuje raport AI z rekomendacją optymalnej technologii inwertera i magazynu energii.
 
-## User & Persona
+Aplikacja hostowana w chmurze Azure, zbudowana w C# / .NET MVC, z jednym kontem użytkownika.
 
-### Primary Persona
-- **Nazwa robocza:** Właściciel / opiekun techniczny pomieszczenia
-- **Rola:** Osoba analizująca warunki środowiskowe pod inwestycję PV
-- **Moment użycia:** Po zebraniu danych z urządzenia pomiarowego i przed decyzją o doborze technologii
-- **Aktualny koszt:** Ręczne porównywanie danych z wielu źródeł i brak spójnego raportu decyzyjnego
+## 2. Problem użytkownika
 
-## Success Criteria
+Właściciel domu chce podjąć świadomą decyzję o doborze inwertera i magazynu energii do instalacji fotowoltaicznej. Potrzebuje narzędzia, które:
+- zbiera i koreluje dane klimatyczne z pomieszczenia z danymi pogodowymi,
+- identyfikuje ekstremalne warunki,
+- generuje merytoryczną rekomendację technologiczną opartą na zebranych danych.
 
-### Primary
-- Wszystkie rekordy pomiarowe z urządzenia są skorelowane z danymi pogodowymi mimo różnic interwałów czasowych.
-- Użytkownik może wygenerować raport AI zawierający: decyzję „nadaje się/nie nadaje się”, czynniki dyskwalifikujące (jeśli są) oraz rekomendowaną technologię zestawu inwerter + magazyn energii.
+## 3. Wymagania funkcjonalne
 
-### Secondary
-- Użytkownik może dodawać notatki tekstowe do każdego rekordu pomiarowego i uwzględniać je podczas interpretacji wyników.
-- Użytkownik otrzymuje wykres zależności danych pomiarowych i pogodowych do szybkiego przeglądu trendów.
+### FR-1: Uwierzytelnianie
+- Logowanie jednego użytkownika (jedno konto).
+- Sesja z timeoutem.
 
-### Guardrails
-- Import i korelacja danych nie mogą pomijać rekordów bez jawnego oznaczenia braków.
-- Ekstremalne odczyty muszą być wizualnie wyróżnione i łatwe do odfiltrowania.
-- Zakres MVP nie obejmuje analizy liczby paneli ani pełnego modelu zapotrzebowania energetycznego.
+### FR-2: Import danych pomiarowych (CSV)
+- Upload pliku CSV z urządzenia pomiarowego.
+- Predefiniowany format: `timestamp, temperature_c, humidity_pct` (interwał 30 min).
+- Walidacja formatu i duplikatów.
+- Przechowywanie zaimportowanych rekordów w bazie danych.
 
-## User Stories
+### FR-3: Import danych pogodowych (CSV)
+- Upload pliku CSV z danymi pogodowymi.
+- Predefiniowany format: `timestamp, temperature_c, humidity_pct, cloud_cover_pct`.
+- Interwał czasowy może się różnić od danych pomiarowych.
+- Walidacja formatu.
 
-### US-01: Import i korelacja danych środowiskowych
+### FR-4: Korelacja danych
+- Automatyczne dopasowanie danych pogodowych do pomiarowych (interpolacja liniowa).
+- Wynik: każdy rekord pomiarowy ma przypisane skorelowane dane pogodowe.
 
-- **Given** użytkownik posiada plik CSV z urządzenia pomiarowego i źródło danych pogodowych (API lub CSV)
-- **When** uruchamia import obu źródeł i zleca korelację
-- **Then** otrzymuje jednolity zestaw danych z przypisanymi danymi pogodowymi do rekordów pomiarowych
+### FR-5: Notatki do rekordów pomiarowych
+- Użytkownik może dodać/edytować tekstową uwagę do dowolnego rekordu pomiarowego.
+- Uwagi przechowywane w bazie danych.
 
-#### Acceptance Criteria
-- Rekordy pomiarowe bez możliwego dopasowania pogodowego są jawnie oznaczone
-- Różne interwały czasowe są normalizowane według jawnej reguły dopasowania czasu
-- Użytkownik widzi liczbę rekordów wejściowych i skorelowanych
+### FR-6: Wizualizacja (wykres)
+- Wykres zależności między danymi pomiarowymi a pogodowymi.
+- Dostępny w dowolnym momencie po imporcie danych.
+- Oś X: czas; Oś Y: temperatura/wilgotność (pomiarowa vs pogodowa).
 
-### US-02: Analiza anomalii i kontekstu
+### FR-7: Ekstrema
+- Wyróżnienie rekordów pomiarowych przekraczających progi min/max.
+- Progi konfigurowalne w ustawieniach aplikacji.
+- Widoczne oznaczenie ekstremów na liście danych i na wykresie.
 
-- **Given** dane zostały poprawnie skorelowane
-- **When** użytkownik przegląda wyniki na wykresie i dodaje notatki do rekordów
-- **Then** może szybko wskazać ekstremalne odczyty i opisać ich kontekst
+### FR-8: Raport AI (PDF)
+- Generowanie raportu na żądanie użytkownika.
+- Integracja z OpenAI API (GPT).
+- Treść raportu: ocena nadaje się / nie nadaje się, uzasadnienie, generyczna rekomendacja technologii inwertera i magazynu energii.
+- Eksport do PDF (tylko tekst, bez grafiki).
 
-#### Acceptance Criteria
-- Ekstremalne odczyty są wyraźnie odróżnione wizualnie od pozostałych
-- Notatka może zostać przypisana do pojedynczego rekordu pomiarowego
+### FR-9: Ustawienia
+- Konfiguracja progów ekstremalnych (min/max temperatura, min/max wilgotność).
 
-### US-03: Raport decyzyjny AI dla pomieszczenia
+## 4. Granice produktu (poza zakresem MVP)
 
-- **Given** użytkownik ma skorelowane dane i ewentualne notatki
-- **When** wybiera generowanie raportu AI
-- **Then** dostaje ocenę nadaje się/nie nadaje się, czynniki dyskwalifikujące oraz rekomendację technologii inwertera i magazynu
+- Zaawansowana edycja danych pomiarowych.
+- Obsługa wielu lokalizacji pomiarowych.
+- Obsługa wielu użytkowników / ról.
+- Analiza zapotrzebowania na energię i liczby paneli PV.
+- Automatyczne pobieranie danych pogodowych z API.
+- Wielojęzyczność (tylko PL w MVP).
 
-#### Acceptance Criteria
-- Raport zawiera sekcję decyzji binarnej oraz krótkie uzasadnienie
-- Raport wyraźnie oddziela wnioski od danych wejściowych
-- Raport jest dostępny jako plik PDF wygenerowany online
-- Raport nie obejmuje doboru liczby paneli PV
+## 5. Historyjki użytkownika
 
-## Functional Requirements
+### US-1: Logowanie
+Jako użytkownik chcę się zalogować do aplikacji, aby uzyskać dostęp do swoich danych.
+**Kryteria akceptacji:**
+- Formularz logowania (login + hasło).
+- Po poprawnym logowaniu przekierowanie na dashboard.
+- Błędne dane → komunikat o błędzie.
 
-### Data Ingestion & Correlation
-- FR-001: Użytkownik może zaimportować plik CSV z urządzenia pomiarowego zawierający temperaturę i wilgotność w interwałach 30-minutowych. Priority: must-have
-  > Sokrates: Rozważono kontrargument: "format CSV z urządzenia może się zmieniać i import będzie kruchy". Rozwiązanie: zachowano FR; parser w MVP wspiera jeden jawnie opisany format wejściowy, a odchylenia są raportowane jako błąd walidacji.
+### US-2: Import danych pomiarowych
+Jako użytkownik chcę zaimportować plik CSV z urządzenia pomiarowego, aby aplikacja przechowywała moje odczyty.
+**Kryteria akceptacji:**
+- Upload pliku CSV przez formularz.
+- Walidacja formatu (błąd jeśli niezgodny).
+- Dane zapisane w bazie po pomyślnym imporcie.
+- Informacja o liczbie zaimportowanych rekordów.
 
-- FR-002: Użytkownik może dostarczyć dane pogodowe dla lokalizacji przez API zewnętrznego serwisu pogodowego lub przez import CSV pobrany ręcznie. Priority: must-have
-  > Sokrates: Rozważono kontrargument: "dwie ścieżki importu zwiększają złożoność MVP". Rozwiązanie: zachowano FR; obie ścieżki są krytyczne dla ciągłości pracy przy braku dostępu do API.
+### US-3: Import danych pogodowych
+Jako użytkownik chcę zaimportować plik CSV z danymi pogodowymi, aby aplikacja mogła je skorelować z moimi pomiarami.
+**Kryteria akceptacji:**
+- Upload pliku CSV przez formularz.
+- Walidacja formatu.
+- Dane zapisane w bazie.
 
-- FR-003: System może automatycznie skorelować dane pomiarowe i pogodowe nawet gdy dane pogodowe mają inny interwał czasowy niż 30 minut. Priority: must-have
-  > Sokrates: Rozważono kontrargument: "agregacja/normalizacja czasu może zniekształcić wyniki". Rozwiązanie: zachowano FR; metoda korelacji i poziom dopasowania czasu muszą być jawnie raportowane użytkownikowi.
+### US-4: Korelacja danych
+Jako użytkownik chcę, aby aplikacja automatycznie skorelowała dane pomiarowe z pogodowymi, abym widział pełny kontekst klimatyczny.
+**Kryteria akceptacji:**
+- Po imporcie danych pogodowych następuje automatyczna korelacja.
+- Interpolacja liniowa dla niedopasowanych interwałów.
+- Każdy rekord pomiarowy ma przypisane wartości pogodowe.
 
-### Analysis & Insight
-- FR-004: Użytkownik może dodać tekstową notatkę do każdego rekordu danych pomiarowych. Priority: must-have
-  > Sokrates: Rozważono kontrargument: "notatki na rekord mogą być kosztowne i rzadko używane". Rozwiązanie: zachowano FR jako must-have, ponieważ notatki są potrzebne do kontekstu anomalii.
+### US-5: Dodawanie notatek
+Jako użytkownik chcę dodać uwagę tekstową do rekordu pomiarowego, aby opisać anomalie.
+**Kryteria akceptacji:**
+- Pole tekstowe przy rekordzie pomiarowym.
+- Zapis i edycja notatki.
 
-- FR-005: Użytkownik może wyświetlić wykres zależności między danymi z urządzenia i danymi pogodowymi na wspólnej osi czasu. Priority: must-have
-  > Sokrates: Rozważono kontrargument: "wykres może nie wnosić wartości ponad tabelę". Rozwiązanie: zachowano FR; szybka interpretacja trendu jest kluczowa dla decyzji inwestycyjnej.
+### US-6: Wyświetlenie wykresu
+Jako użytkownik chcę wyświetlić wykres porównawczy danych pomiarowych i pogodowych, aby wizualnie ocenić zależności.
+**Kryteria akceptacji:**
+- Wykres liniowy (czas vs wartości).
+- Możliwość wyboru zakresu dat.
+- Widoczne serie: temperatura pomiarowa, temperatura pogodowa, wilgotność pomiarowa, wilgotność pogodowa.
 
-- FR-006: System może wykryć i wyróżnić ekstremalne odczyty z urządzenia pomiarowego w widocznym miejscu. Priority: must-have
-  > Sokrates: Rozważono kontrargument: "brak definicji ekstremum może dawać mylące alarmy". Rozwiązanie: zachowano FR; ekstremum definiowane przez konfigurowalne wartości min/max w ustawieniach aplikacji.
+### US-7: Ekstrema
+Jako użytkownik chcę widzieć wyróżnione ekstremalne odczyty, abym mógł szybko zidentyfikować problematyczne warunki.
+**Kryteria akceptacji:**
+- Rekordy przekraczające progi wyróżnione kolorem/ikoną.
+- Oddzielna sekcja/widok z listą ekstremów.
 
-### AI Report
-- FR-007: Użytkownik może wygenerować online raport AI w formacie PDF oparty na zebranych danych skorelowanych i notatkach. Priority: must-have
-  > Sokrates: Rozważono kontrargument: "jakość raportu AI będzie niestabilna bez dodatkowego nadzoru". Rozwiązanie: zachowano FR; raport jest wsparciem decyzyjnym i zawiera uzasadnienie.
+### US-8: Konfiguracja progów
+Jako użytkownik chcę ustawić progi min/max dla temperatury i wilgotności, aby system wiedział, co jest ekstremum.
+**Kryteria akceptacji:**
+- Formularz ustawień z polami min/max.
+- Zmiana progów natychmiast wpływa na oznaczenie ekstremów.
 
-- FR-008: Raport AI może jednoznacznie stwierdzić, czy pomieszczenie nadaje się do rozwiązania PV (tak/nie). Priority: must-have
-  > Sokrates: Rozważono kontrargument: "decyzja binarna może upraszczać realny stan". Rozwiązanie: zachowano FR; decyzja binarna jest wymagana, ale musi być uzupełniona sekcją uzasadnienia.
+### US-9: Generowanie raportu AI
+Jako użytkownik chcę wygenerować raport AI na podstawie zgromadzonych danych, aby otrzymać rekomendację technologiczną.
+**Kryteria akceptacji:**
+- Przycisk „Generuj raport".
+- Wywołanie OpenAI API z kontekstem danych.
+- Wyświetlenie treści raportu w aplikacji.
+- Pobranie raportu w formacie PDF.
 
-- FR-009: Raport AI może wskazać czynniki dyskwalifikujące i zaproponować ogólną klasę technologii zestawu inwertera z magazynem energii. Priority: must-have
-  > Sokrates: Rozważono kontrargument: "rekomendacja technologii bez modelu energii może być zbyt ogólna". Rozwiązanie: zachowano FR; zakres rekomendacji dotyczy typu technologii, nie ilości paneli ani pełnego sizingu instalacji.
+## 6. Metryki sukcesu
 
-## Non-Functional Requirements
+1. 100% zaimportowanych rekordów pomiarowych jest skorelowanych z danymi pogodowymi.
+2. Raport AI zawiera ocenę nadaje się / nie nadaje się + rekomendację technologii inwertera i magazynu energii.
+3. Czas generowania raportu < 60 sekund.
 
-- Import i korelacja danych powinny zwrócić wynik dla standardowego zestawu MVP bez zauważalnego opóźnienia blokującego pracę użytkownika.
-- Aplikacja powinna zapewnić pełną transparentność braków danych (żaden brak nie może zostać „ukryty”).
-- Raport AI powinien być reprodukowalny dla tego samego zestawu danych wejściowych i tej samej konfiguracji modelu.
-- Raport AI powinien być możliwy do wygenerowania online i eksportu do formatu PDF.
-- # TODO: ilościowe progi NFR (SLA/czas odpowiedzi) — see Open Questions
+## 7. Wymagania niefunkcjonalne
 
-## Business Logic
-
-Aplikacja klasyfikuje przydatność pomieszczenia pod zestaw PV poprzez połączenie długoterminowych pomiarów środowiskowych z danymi pogodowymi i wyprowadzenie decyzji wraz z uzasadnieniem.
-
-Reguła konsumuje dane czasowe (temperatura, wilgotność, zachmurzenie) oraz notatki kontekstowe użytkownika, a wynikiem jest decyzja binarna i rekomendacja technologii zestawu inwerter + magazyn energii. Użytkownik styka się z tą regułą podczas generowania raportu AI po etapie korelacji danych.
-
-## Access Control
-
-Single user; no auth; data processed in one local workspace for one operator in MVP.
-
-## Non-Goals
-
-- Brak zdalnego dostępu i hostowanej wersji webowej w MVP.
-- Brak zaawansowanej edycji danych pomiarowych i pogodowych w MVP.
-- Brak obsługi wielu lokalizacji pomiarowych.
-- Brak obsługi wielu użytkowników i ról.
-- Brak analizy zapotrzebowania energetycznego i brak doboru liczby paneli PV.
-
-## Open Questions
-
-1. **Czy projekt ma hard deadline biznesowy (konkretna data kalendarzowa)?** — Owner: user. Block: no (MVP: 6 tygodni po godzinach — confirmed).
-2. **Jakie ilościowe progi NFR obowiązują (np. czas odpowiedzi, maks. czas generacji raportu)?** — Owner: user. Block: no.
+- **Hosting:** Azure (App Service + Azure SQL Database).
+- **Język interfejsu:** polski.
+- **Bezpieczeństwo:** HTTPS, uwierzytelnianie ASP.NET Identity.
+- **Wydajność:** obsługa zbioru danych do 20 000 rekordów pomiarowych (1 rok × 48 odczytów/dzień × 365 dni ≈ 17 520).
+- **CI/CD:** Azure DevOps + GitHub.

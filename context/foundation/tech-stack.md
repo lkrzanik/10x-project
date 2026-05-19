@@ -1,29 +1,29 @@
 ---
-starter_id: "dotnet"
-package_manager: "dotnet"
-project_name: "10x-fotowoltaika"
+starter_id: dotnet-mvc
+package_manager: dotnet
+project_name: 10xPV
 hints:
-  language_family: "dotnet"
-  team_size: "solo"
-  deployment_target: "self-host"
-  ci_provider: "github-actions"
-  ci_default_flow: "auto-deploy-on-merge"
-  bootstrapper_confidence: "verified"
-  path_taken: "custom"
-  quality_override: false
-  self_check_answers:
+  path_taken: standard
+  deployment_target: azure_app_service
+  database: azure_sql
+  ci_cd: azure_devops_yaml_github
+  auth: aspnet_identity
+  ai_provider: openai
+  pdf_generation: true
+  feature_flags:
+    authentication: true
+    payments: false
+    real_time: false
+    ai: true
+    background_jobs: false
+  bootstrapper_confidence: first-class
+  agent_friendly_gates:
     typed: true
-    from_official_starter: true
-    conventions: true
-    docs_current: true
-    can_judge_agent: true
-  has_auth: false
-  has_payments: false
-  has_realtime: false
-  has_ai: true
-  has_background_jobs: false
+    convention_based: true
+    popular_in_training_data: true
+    well_documented: true
 ---
 
 ## Why this stack
 
-Wybrano `dotnet`, bo wskazałeś preferencję technologii Microsoft i języka C#, a karta startera ma status `verified`, pełne typowanie i dojrzałą dokumentację. Ponieważ dla komórki `desktop + dotnet` nie ma domyślnej rekomendacji, zapisano ścieżkę `custom`; przy MVP dla pojedynczego operatora ustawiono `team_size: solo`, cel wdrożenia `self-host` oraz domyślny pipeline GitHub Actions. Flagi funkcjonalne odzwierciedlają PRD: AI jest w zakresie, a auth, payments, realtime i background jobs pozostają poza MVP.
+ASP.NET Core MVC na Azure App Service to naturalny wybór dla single-user internal tool w ekosystemie .NET. Silne typowanie C#, konwencyjny układ MVC i doskonała dokumentacja Microsoft zapewniają wysoką produktywność agenta AI i solo-developera. Azure SQL Database pokrywa potrzeby persystencji bez nadmiarowej złożoności. Azure DevOps Pipelines (YAML) z repozytorium GitHub daje CI/CD natywnie zintegrowane z targetem deploymentu. OpenAI SDK dla .NET i biblioteki do generowania PDF (np. QuestPDF) są dobrze udokumentowane i typowane.
