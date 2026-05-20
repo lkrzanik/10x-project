@@ -1,1 +1,5 @@
 /.github
+/app/.vs
+/app/bin
+/app/obj
+/app/10xPV.csproj.user
