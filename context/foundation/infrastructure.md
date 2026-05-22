@@ -20,7 +20,7 @@ Plan wdrożenia:
 - Azure SQL Database **Free tier** (12 miesięcy) → potem Basic DTU (~$5/mies.)
 - Deployment mode: **self-contained** (eliminuje zależność od runtime .NET 10 na platformie)
 - OS: **Windows** (zapewnia kompatybilność QuestPDF bez dodatkowych zależności systemowych)
-- Region: **West Europe** (kolokacja app + database)
+- Region: **Poland Central** (kolokacja app + database)
 
 ## Porównanie platform — macierz punktacji
 
