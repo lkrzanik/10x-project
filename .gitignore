@@ -1,4 +1,5 @@
-/.github
+.github/**/*10x-*
+.github/copilot-instructions.md
 /app/.vs
 /app/bin
 /app/obj
