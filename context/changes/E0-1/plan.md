@@ -58,3 +58,5 @@ Deliver a working EF Core DbContext with SQL Server provider, connection string 
 ## Progress
 
 <!-- Updated by /10x-implement -->
+- [x] Phase 1 — NuGet packages & DbContext skeleton → `b145236`
+- [x] Phase 2 — Connection string configuration → included in `b145236`
