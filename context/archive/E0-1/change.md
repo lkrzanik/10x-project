@@ -14,8 +14,10 @@ Roadmap Milestone 0, element E0-1
 
 ## Status
 
-🟡 Planning
+✅ Done
 
 ## Progress
 
-<!-- Phases and commit SHAs will be recorded here by /10x-implement -->
+- [x] Phase 1 — NuGet packages & DbContext skeleton → `b145236`
+- [x] Phase 2 — Connection string configuration → included in `b145236`
+- [x] Phase 3 — Initial migration & verification → `bcb3674`
