@@ -67,3 +67,4 @@ Single authenticated user can log in and out. All app routes require authenticat
 
 <!-- Updated by /10x-implement -->
 - [x] Phase 1 — Identity packages, DbContext integration & middleware → `28b60a5`
+- [x] Phase 2 — Migration for Identity tables → `db07fd9`

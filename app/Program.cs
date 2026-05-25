@@ -33,6 +33,8 @@ builder.Services.AddControllersWithViews(opts =>
 
 var app = builder.Build();
 
+await SeedData.EnsureAdminAsync(app.Services);
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
