@@ -42,3 +42,4 @@ Deliver a responsive Bootstrap 5 layout with Polish navigation, consistent page 
 ## Progress
 
 <!-- Updated by /10x-implement -->
+- [x] Phase 1 — Layout, navigation & footer → `2c0ea0f`

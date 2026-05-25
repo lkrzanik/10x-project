@@ -13,8 +13,8 @@ Roadmap Milestone 0, element E0-3
 
 ## Status
 
-🟡 Planning
+✅ Done
 
 ## Progress
 
-<!-- Phases and commit SHAs will be recorded here by /10x-implement -->
+- [x] Phase 1 — Layout, navigation & footer → `2c0ea0f`
