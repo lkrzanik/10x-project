@@ -177,7 +177,6 @@ Uruchomienia lokalne (Windows/PowerShell):
 - Dodano deduplikację po `Timestamp` dla `Sensor` i `Weather` (duplikaty w bazie + duplikaty w bieżącym batchu).
 - Kontrakt `ClimateImportController` i orchestratora pozostawiono bez zmian.
 - Weryfikacja: `dotnet build` ✅, `dotnet test .\Tests\10xPV.Tests\10xPV.Tests.csproj` ✅ (14/14).
-- Commit SHA: _niezapisany w tej sesji (brak commita)_
 
 ### 2026-05-26 — F2 implementacja
 
@@ -187,7 +186,6 @@ Uruchomienia lokalne (Windows/PowerShell):
 - Dodano nowe ViewModel-e: `ClimateDataFilterViewModel`, `ClimateDataRowViewModel`, `ClimateDataPageViewModel`.
 - Dodano testy `ClimateDataControllerTests` pokrywające: domyślny widok, filtr daty, paginację skrajną i błąd walidacji zakresu dat.
 - Weryfikacja: `dotnet build` ✅, `dotnet test .\Tests\10xPV.Tests\10xPV.Tests.csproj` ✅ (18/18).
-- Commit SHA: _niezapisany w tej sesji (brak commita)_
 
 ### 2026-05-26 — F3 implementacja
 
@@ -197,6 +195,5 @@ Uruchomienia lokalne (Windows/PowerShell):
 - Zaktualizowano `docs/reference/contract-surfaces.md` o endpoint `ClimateData/Index` i seam query kontrolera.
 - Weryfikacja: `dotnet build` ✅, `dotnet test .\Tests\10xPV.Tests\10xPV.Tests.csproj` ✅ (20/20), `get_errors` ✅ (brak błędów).
 - Uwaga: pozostało istniejące ostrzeżenie zależności `NU1903` dla `Microsoft.Build.Tasks.Core` 17.7.2 (poza zakresem tej fazy).
-- Commit SHA: _niezapisany w tej sesji (brak commita)_
 
 <!-- Updated by /10x-plan -->
