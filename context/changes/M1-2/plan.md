@@ -136,7 +136,7 @@ Uruchomienia lokalne (Windows/PowerShell):
 ## Progress
 
 - [x] F1 — Kontrakt parsera i modele
-- [ ] F2 — Implementacja parsera + walidacja
+- [x] F2 — Implementacja parsera + walidacja
 - [ ] F3 — Testy i gotowość integracyjna
 
 <!-- Updated by /10x-implement: phase status, commit SHA -->

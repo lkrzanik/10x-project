@@ -1,5 +1,6 @@
 using _10xPV.Data;
 using _10xPV.Services;
+using _10xPV.Services.Csv;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -38,6 +39,7 @@ builder.Services.AddControllersWithViews(opts =>
 
 builder.Services.AddScoped<IClimateDataValidator, ClimateDataValidator>();
 builder.Services.AddScoped<IDeduplicationService, DeduplicationService>();
+builder.Services.AddScoped<ICsvImportService, CsvImportService>();
 
 var app = builder.Build();
 
