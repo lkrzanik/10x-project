@@ -168,7 +168,7 @@ Uruchomienia lokalne (Windows/PowerShell):
 ## Progress
 
 - [x] F1 — Persistence adapter (domknięcie import -> DB)
-- [ ] F2 — Query + endpoint tabeli z filtrem i paginacją
+- [x] F2 — Query + endpoint tabeli z filtrem i paginacją
 - [ ] F3 — UI, testy i stabilizacja kontraktu
 
 ### 2026-05-26 — F1 implementacja
@@ -177,6 +177,16 @@ Uruchomienia lokalne (Windows/PowerShell):
 - Dodano deduplikację po `Timestamp` dla `Sensor` i `Weather` (duplikaty w bazie + duplikaty w bieżącym batchu).
 - Kontrakt `ClimateImportController` i orchestratora pozostawiono bez zmian.
 - Weryfikacja: `dotnet build` ✅, `dotnet test .\Tests\10xPV.Tests\10xPV.Tests.csproj` ✅ (14/14).
+- Commit SHA: _niezapisany w tej sesji (brak commita)_
+
+### 2026-05-26 — F2 implementacja
+
+- Dodano `ClimateDataController` z akcją `Index` (GET) obsługującą `dataSource`, `from`, `to`, `page`, `pageSize`.
+- Zaimplementowano zapytania `AsNoTracking()` dla `SensorReadings` i `WeatherReadings` z filtrem zakresu dat oraz paginacją server-side (`Skip/Take`).
+- Dodano walidację wejścia `from > to` (bez wyjątku) oraz normalizację paginacji (`page < 1`, `page > totalPages`).
+- Dodano nowe ViewModel-e: `ClimateDataFilterViewModel`, `ClimateDataRowViewModel`, `ClimateDataPageViewModel`.
+- Dodano testy `ClimateDataControllerTests` pokrywające: domyślny widok, filtr daty, paginację skrajną i błąd walidacji zakresu dat.
+- Weryfikacja: `dotnet build` ✅, `dotnet test .\Tests\10xPV.Tests\10xPV.Tests.csproj` ✅ (18/18).
 - Commit SHA: _niezapisany w tej sesji (brak commita)_
 
 <!-- Updated by /10x-plan -->
