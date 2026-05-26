@@ -1,6 +1,6 @@
 .github/**/*10x-*
 .github/copilot-instructions.md
 /app/.vs
-/app/bin
-/app/obj
+/app/**/bin
+/app/**/obj
 /app/10xPV.csproj.user
