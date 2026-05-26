@@ -35,8 +35,6 @@
         <input id="to" type="date" name="to" class="form-control" value="@(Model.Filter.To?.ToString("yyyy-MM-dd"))" />
     </div>
 
-    <input type="hidden" name="pageSize" value="@Model.PageSize" />
-
     <div class="col-md-3 d-flex align-items-end gap-2">
         <button type="submit" class="btn btn-primary">Filtruj</button>
         <a asp-action="Sensor" asp-controller="ClimateData" class="btn btn-outline-secondary">Wyczyść</a>
@@ -52,9 +50,6 @@
     </div>
     <div>
         <span class="fw-semibold">Strona:</span> @Model.CurrentPage / @(Model.TotalPages == 0 ? 1 : Model.TotalPages)
-    </div>
-    <div>
-        <span class="fw-semibold">Rozmiar strony:</span> @Model.PageSize
     </div>
 </div>
 
@@ -100,7 +95,6 @@
                    asp-route-from="@Model.Filter.From"
                    asp-route-to="@Model.Filter.To"
                    asp-route-page="@(Model.CurrentPage - 1)"
-                   asp-route-pageSize="@Model.PageSize"
                    aria-label="Poprzednia strona">Poprzednia</a>
             </li>
 
@@ -115,7 +109,6 @@
                    asp-route-from="@Model.Filter.From"
                    asp-route-to="@Model.Filter.To"
                    asp-route-page="@(Model.CurrentPage + 1)"
-                   asp-route-pageSize="@Model.PageSize"
                    aria-label="Następna strona">Następna</a>
             </li>
         </ul>

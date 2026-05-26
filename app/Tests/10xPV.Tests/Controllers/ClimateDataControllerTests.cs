@@ -68,8 +68,7 @@ public class ClimateDataControllerTests
         var result = await sut.Sensor(
             from: new DateOnly(2026, 2, 2),
             to: new DateOnly(2026, 2, 2),
-            page: 1,
-            pageSize: 50);
+            page: 1);
 
         var viewResult = Assert.IsType<ViewResult>(result);
         var model = Assert.IsType<ClimateDataPageViewModel>(viewResult.Model);
@@ -100,8 +99,7 @@ public class ClimateDataControllerTests
         var sut = CreateSut(dbContext);
 
         var result = await sut.Weather(
-            page: 10,
-            pageSize: 50);
+            page: 10);
 
         var viewResult = Assert.IsType<ViewResult>(result);
         var model = Assert.IsType<ClimateDataPageViewModel>(viewResult.Model);
@@ -124,8 +122,7 @@ public class ClimateDataControllerTests
         var result = await sut.Sensor(
             from: new DateOnly(2026, 4, 10),
             to: new DateOnly(2026, 4, 1),
-            page: 1,
-            pageSize: 50);
+            page: 1);
 
         var viewResult = Assert.IsType<ViewResult>(result);
         var model = Assert.IsType<ClimateDataPageViewModel>(viewResult.Model);
@@ -150,8 +147,7 @@ public class ClimateDataControllerTests
         var sut = CreateSut(dbContext);
 
         var result = await sut.Sensor(
-            page: 0,
-            pageSize: 50);
+            page: 0);
 
         var viewResult = Assert.IsType<ViewResult>(result);
         var model = Assert.IsType<ClimateDataPageViewModel>(viewResult.Model);
@@ -175,8 +171,7 @@ public class ClimateDataControllerTests
 
         var result = await sut.Weather(
             to: new DateOnly(2026, 5, 1),
-            page: 1,
-            pageSize: 50);
+            page: 1);
 
         var viewResult = Assert.IsType<ViewResult>(result);
         var model = Assert.IsType<ClimateDataPageViewModel>(viewResult.Model);

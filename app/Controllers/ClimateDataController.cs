@@ -29,10 +29,9 @@ public class ClimateDataController : Controller
         DateOnly? from = null,
         DateOnly? to = null,
         int page = 1,
-        int pageSize = DefaultPageSize,
         CancellationToken cancellationToken = default)
     {
-        return RenderPageAsync(DataSource.Sensor, nameof(Sensor), from, to, page, pageSize, cancellationToken);
+        return RenderPageAsync(DataSource.Sensor, nameof(Sensor), from, to, page, cancellationToken);
     }
 
     [HttpGet]
@@ -40,10 +39,9 @@ public class ClimateDataController : Controller
         DateOnly? from = null,
         DateOnly? to = null,
         int page = 1,
-        int pageSize = DefaultPageSize,
         CancellationToken cancellationToken = default)
     {
-        return RenderPageAsync(DataSource.Weather, nameof(Weather), from, to, page, pageSize, cancellationToken);
+        return RenderPageAsync(DataSource.Weather, nameof(Weather), from, to, page, cancellationToken);
     }
 
     private async Task<IActionResult> RenderPageAsync(
@@ -52,25 +50,24 @@ public class ClimateDataController : Controller
         DateOnly? from,
         DateOnly? to,
         int page,
-        int pageSize,
         CancellationToken cancellationToken)
     {
-        var normalizedPageSize = NormalizePageSize(pageSize);
+        var pageSize = DefaultPageSize;
 
         if (from.HasValue && to.HasValue && from > to)
         {
             ModelState.AddModelError(string.Empty, "Data początkowa nie może być późniejsza niż data końcowa.");
 
-            return View(viewName, BuildEmptyPage(dataSource, from, to, page, normalizedPageSize));
+            return View(viewName, BuildEmptyPage(dataSource, from, to, page, pageSize));
         }
 
         try
         {
             var model = dataSource switch
             {
-                DataSource.Sensor => await BuildSensorPageAsync(from, to, page, normalizedPageSize, cancellationToken),
-                DataSource.Weather => await BuildWeatherPageAsync(from, to, page, normalizedPageSize, cancellationToken),
-                _ => await BuildSensorPageAsync(from, to, page, normalizedPageSize, cancellationToken)
+                DataSource.Sensor => await BuildSensorPageAsync(from, to, page, pageSize, cancellationToken),
+                DataSource.Weather => await BuildWeatherPageAsync(from, to, page, pageSize, cancellationToken),
+                _ => await BuildSensorPageAsync(from, to, page, pageSize, cancellationToken)
             };
 
             return View(viewName, model);
@@ -79,7 +76,7 @@ public class ClimateDataController : Controller
         {
             _logger.LogError(ex, "Błąd podczas odczytu danych klimatycznych.");
             ModelState.AddModelError(string.Empty, "Wystąpił błąd podczas odczytu danych. Spróbuj ponownie.");
-            return View(viewName, BuildEmptyPage(dataSource, from, to, page, normalizedPageSize));
+            return View(viewName, BuildEmptyPage(dataSource, from, to, page, pageSize));
         }
     }
 
@@ -259,8 +256,4 @@ public class ClimateDataController : Controller
         return page > totalPages ? totalPages : page;
     }
 
-    private static int NormalizePageSize(int pageSize)
-    {
-        return pageSize == DefaultPageSize ? pageSize : DefaultPageSize;
-    }
 }
