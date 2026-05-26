@@ -10,17 +10,11 @@ namespace _10xPV.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "SensorReadings");
-
-            migrationBuilder.DropTable(
-                name: "WeatherReadings");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
         }
     }
 }
