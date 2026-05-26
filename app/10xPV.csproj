@@ -23,6 +23,9 @@
 
   <ItemGroup>
     <Compile Remove="Tests\**\*.cs" />
+    <Content Remove="Tests\**" />
+    <None Remove="Tests\**" />
+    <EmbeddedResource Remove="Tests\**" />
   </ItemGroup>
 
 </Project>
