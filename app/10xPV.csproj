@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>_10xPV</RootNamespace>
     <UserSecretsId>91142762-facb-4339-9507-b6e09b9624e0</UserSecretsId>
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
