@@ -167,6 +167,6 @@ Uruchomienia lokalne (Windows/PowerShell):
   - ✅ Zrealizowano: dodano `IClimateImportOrchestrator` + `ClimateImportOrchestrator` oraz punkt rozszerzenia `IClimateImportPersistenceAdapter` (implementacja `NoOp`), co stabilizuje kontrakt kontrolera/UI pod M1-4.
   - ✅ Decyzja integracyjna: mapowanie parser→encje oraz zapis do DB będą domknięte przez adapter persistence; obecna warstwa orchestratora izoluje UI od zmian modelu trwałości.
   - ✅ Testy: rozszerzono `ClimateImportControllerTests` o scenariusz nieoczekiwanego wyjątku (błąd parsera/IO) obok happy path i walidacji.
-  - 🔖 Commit: `e306254`
+  - 🔖 Commit: `e70d979`
 
 <!-- Updated by /10x-implement: phase status, commit SHA -->
