@@ -11,7 +11,7 @@ public class CsvImportServiceTests
     [Fact]
     public async Task ImportAsync_SensorValidFile_ReturnsSingleValidSensorRow()
     {
-        const string csv = "Timestamp,SensorId,Value,Unit\n2026-01-15T10:30:00,SEN-01,123.45,kWh\n";
+        const string csv = "Timestamp,Temperature,Humidity\n2026-03-23T19:38:03,14.7,63.1\n";
 
         await using var stream = CreateUtf8Stream(csv);
         var result = await _sut.ImportAsync(stream, CsvSchemaType.Sensor);
@@ -25,16 +25,15 @@ public class CsvImportServiceTests
         Assert.Empty(result.WeatherRows);
 
         var row = result.SensorRows[0];
-        Assert.Equal(new DateTime(2026, 1, 15, 10, 30, 0), row.Timestamp);
-        Assert.Equal("SEN-01", row.SensorId);
-        Assert.Equal(123.45, row.Value, 5);
-        Assert.Equal("kWh", row.Unit);
+        Assert.Equal(new DateTime(2026, 3, 23, 19, 38, 3), row.Timestamp);
+        Assert.Equal(14.7, row.Temperature, 5);
+        Assert.Equal(63.1, row.Humidity, 5);
     }
 
     [Fact]
     public async Task ImportAsync_WeatherValidFile_ReturnsSingleValidWeatherRow()
     {
-        const string csv = "Timestamp,TemperatureC,WindSpeedMs,IrradianceWm2\n2026-02-01,12.3,4.5,800\n";
+        const string csv = "Timestamp,Temperature,Humidity,CloudCover\n2026-02-01,12.3,54.5,80\n";
 
         await using var stream = CreateUtf8Stream(csv);
         var result = await _sut.ImportAsync(stream, CsvSchemaType.Weather);
@@ -49,15 +48,15 @@ public class CsvImportServiceTests
 
         var row = result.WeatherRows[0];
         Assert.Equal(new DateTime(2026, 2, 1), row.Timestamp);
-        Assert.Equal(12.3, row.TemperatureC, 5);
-        Assert.Equal(4.5, row.WindSpeedMs, 5);
-        Assert.Equal(800, row.IrradianceWm2, 5);
+        Assert.Equal(12.3, row.Temperature, 5);
+        Assert.Equal(54.5, row.Humidity, 5);
+        Assert.Equal(80, row.CloudCover, 5);
     }
 
     [Fact]
     public async Task ImportAsync_InvalidHeaders_ReturnsHeaderInvalidError()
     {
-        const string csv = "Timestamp,WrongField,Value,Unit\n2026-01-15T10:30:00,SEN-01,123.45,kWh\n";
+        const string csv = "Timestamp,WrongField,Humidity\n2026-01-15T10:30:00,14.5,63.0\n";
 
         await using var stream = CreateUtf8Stream(csv);
         var result = await _sut.ImportAsync(stream, CsvSchemaType.Sensor);
@@ -78,10 +77,10 @@ public class CsvImportServiceTests
     public async Task ImportAsync_MixedSensorRows_CollectsErrorsAndContinues()
     {
         const string csv =
-            "Timestamp,SensorId,Value,Unit\n" +
-            "2026-01-15T10:30:00,SEN-01,123.45,kWh\n" +
-            "invalid-date,SEN-02,44.1,kWh\n" +
-            "2026-01-15T11:00:00,SEN-03,NaN,kWh\n";
+            "Timestamp,Temperature,Humidity\n" +
+            "2026-03-23T19:38:03,14.7,63.1\n" +
+            "invalid-date,15.1,  49.0 \n" +
+            "2026-03-23T20:38:03,NaN,48.8\n";
 
         await using var stream = CreateUtf8Stream(csv);
         var result = await _sut.ImportAsync(stream, CsvSchemaType.Sensor);
@@ -99,14 +98,14 @@ public class CsvImportServiceTests
 
         Assert.Contains(result.Errors, error =>
             error.LineNumber == 4 &&
-            error.Field == "Value" &&
+            error.Field == "Temperature" &&
             error.Code == CsvErrorCodes.RowNumberNanOrInf);
     }
 
     [Fact]
     public async Task ImportAsync_OnlyHeaderAndEmptyRows_ReturnsZeroRowsWithoutErrors()
     {
-        const string csv = "Timestamp,SensorId,Value,Unit\n\n   \n";
+        const string csv = "Timestamp,Temperature,Humidity\n\n   \n";
 
         await using var stream = CreateUtf8Stream(csv);
         var result = await _sut.ImportAsync(stream, CsvSchemaType.Sensor);

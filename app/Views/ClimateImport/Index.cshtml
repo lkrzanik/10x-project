@@ -10,11 +10,6 @@
         <h1 class="mb-3">Import danych CSV</h1>
         <p class="text-muted">Prześlij plik CSV i wybierz typ schematu danych do przetworzenia.</p>
 
-        @if (TempData["ImportNotImplemented"] is string info)
-        {
-            <div class="alert alert-info" role="alert">@info</div>
-        }
-
         <form asp-action="Index" asp-controller="ClimateImport" method="post" enctype="multipart/form-data" id="csv-import-form" class="card shadow-sm">
             <div class="card-body">
                 @Html.AntiForgeryToken()
@@ -46,6 +41,18 @@
         {
             <section class="mt-4">
                 <h2 class="h4">Podsumowanie importu</h2>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Summary.StatusMessage))
+                {
+                    var summaryAlertClass = Model.Summary.InvalidRows == 0
+                        ? "alert-success"
+                        : (Model.Summary.ValidRows == 0 ? "alert-danger" : "alert-warning");
+
+                    <div class="alert @summaryAlertClass" role="status">
+                        @Model.Summary.StatusMessage
+                    </div>
+                }
+
                 <ul class="list-group">
                     <li class="list-group-item d-flex justify-content-between"><span>Wiersze łącznie</span><strong>@Model.Summary.TotalRows</strong></li>
                     <li class="list-group-item d-flex justify-content-between"><span>Wiersze poprawne</span><strong>@Model.Summary.ValidRows</strong></li>

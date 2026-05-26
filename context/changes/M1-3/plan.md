@@ -154,7 +154,11 @@ Uruchomienia lokalne (Windows/PowerShell):
   - ✅ Zrealizowano: kontroler `ClimateImportController` (GET/POST), walidacja uploadu (brak pliku, 0 B, rozszerzenie `.csv`, limit 10 MB, brak schematu), modele strony importu, link nawigacyjny i testy kontrolera.
   - ✅ Weryfikacja: `dotnet build` oraz `dotnet test` (9/9) przechodzą.
   - 🔖 Commit: `198cac3`
-- [ ] F2 — Integracja parsera i prezentacja wyników
+- [x] F2 — Integracja parsera i prezentacja wyników
+  - ✅ Zrealizowano: integrację `ICsvImportService.ImportAsync` w `POST Index`, mapowanie `CsvImportResult` → `ClimateImportPageViewModel`, obsługę `OperationCanceledException` i bezpieczny komunikat dla wyjątków nieoczekiwanych oraz status importu (`sukces` / `częściowy sukces` / `błędy`).
+  - ✅ UI: `Views/ClimateImport/Index.cshtml` pokazuje metryki + alert statusu i listę błędów per wiersz; UX „w trakcie importu” (disable submit + komunikat) aktywny.
+  - ✅ Weryfikacja: `dotnet build` (PASS, ostrzeżenia NU1903 istniejące), `dotnet test` (11/11 PASS), brak błędów diagnostycznych w workspace.
+  - 🔖 Commit: _(pending)_
 - [ ] F3 — Gotowość integracyjna pod persistence i M1-4
 
 <!-- Updated by /10x-implement: phase status, commit SHA -->

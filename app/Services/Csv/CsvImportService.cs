@@ -5,22 +5,21 @@ namespace _10xPV.Services.Csv;
 
 public sealed class CsvImportService : ICsvImportService
 {
-    private static readonly string[] SupportedDateFormats = ["yyyy-MM-dd", "yyyy-MM-ddTHH:mm:ss"];
+    private static readonly string[] SupportedDateFormats = ["yyyy/MM/dd  HH:mm:ss", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-dd"];
 
     private static readonly string[] SensorHeaders =
     [
         "Timestamp",
-        "SensorId",
-        "Value",
-        "Unit"
+        "Temperature",
+        "Humidity"
     ];
 
     private static readonly string[] WeatherHeaders =
     [
         "Timestamp",
-        "TemperatureC",
-        "WindSpeedMs",
-        "IrradianceWm2"
+        "Temperature",
+        "Humidity",
+        "CloudCover"
     ];
 
     public async Task<CsvImportResult> ImportAsync(
@@ -139,18 +138,16 @@ public sealed class CsvImportService : ICsvImportService
         var errors = new List<CsvRowError>();
 
         var timestampRaw = GetColumn(columns, 0);
-        var sensorIdRaw = GetColumn(columns, 1);
-        var valueRaw = GetColumn(columns, 2);
-        var unitRaw = GetColumn(columns, 3);
+        var temperatureRaw = GetColumn(columns, 1);
+        var humidityRaw = GetColumn(columns, 2);
 
         var timestamp = ParseRequiredDateTime(lineNumber, "Timestamp", timestampRaw, errors);
-        var sensorId = ParseRequiredText(lineNumber, "SensorId", sensorIdRaw, errors);
-        var value = ParseRequiredNumber(lineNumber, "Value", valueRaw, errors);
-        var unit = ParseRequiredText(lineNumber, "Unit", unitRaw, errors);
+        var temperature = ParseRequiredNumber(lineNumber, "Temperature", temperatureRaw, errors);
+        var humidity = ParseRequiredNumber(lineNumber, "Humidity", humidityRaw, errors);
 
         if (errors.Count == 0)
         {
-            target.Add(new SensorCsvRow(timestamp!.Value, sensorId!, value!.Value, unit!));
+            target.Add(new SensorCsvRow(timestamp!.Value, temperature!.Value, humidity!.Value));
         }
 
         return errors;
@@ -165,21 +162,21 @@ public sealed class CsvImportService : ICsvImportService
 
         var timestampRaw = GetColumn(columns, 0);
         var temperatureRaw = GetColumn(columns, 1);
-        var windSpeedRaw = GetColumn(columns, 2);
-        var irradianceRaw = GetColumn(columns, 3);
+    var humidityRaw = GetColumn(columns, 2);
+    var cloudCoverRaw = GetColumn(columns, 3);
 
         var timestamp = ParseRequiredDateTime(lineNumber, "Timestamp", timestampRaw, errors);
-        var temperature = ParseRequiredNumber(lineNumber, "TemperatureC", temperatureRaw, errors);
-        var windSpeed = ParseRequiredNumber(lineNumber, "WindSpeedMs", windSpeedRaw, errors);
-        var irradiance = ParseRequiredNumber(lineNumber, "IrradianceWm2", irradianceRaw, errors);
+    var temperature = ParseRequiredNumber(lineNumber, "Temperature", temperatureRaw, errors);
+    var humidity = ParseRequiredNumber(lineNumber, "Humidity", humidityRaw, errors);
+    var cloudCover = ParseRequiredNumber(lineNumber, "CloudCover", cloudCoverRaw, errors);
 
         if (errors.Count == 0)
         {
             target.Add(new WeatherCsvRow(
                 timestamp!.Value,
                 temperature!.Value,
-                windSpeed!.Value,
-                irradiance!.Value));
+        humidity!.Value,
+        cloudCover!.Value));
         }
 
         return errors;
@@ -260,25 +257,6 @@ public sealed class CsvImportService : ICsvImportService
         }
 
         return parsed;
-    }
-
-    private static string? ParseRequiredText(
-        int lineNumber,
-        string field,
-        string? rawValue,
-        ICollection<CsvRowError> errors)
-    {
-        if (string.IsNullOrWhiteSpace(rawValue))
-        {
-            errors.Add(new CsvRowError(
-                lineNumber,
-                field,
-                CsvErrorCodes.RowFieldRequired,
-                $"Pole '{field}' jest wymagane."));
-            return null;
-        }
-
-        return rawValue.Trim();
     }
 
     private static string? GetColumn(IReadOnlyList<string> columns, int index)

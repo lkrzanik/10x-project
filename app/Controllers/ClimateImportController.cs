@@ -1,11 +1,23 @@
 using _10xPV.Models.ClimateImport;
+using _10xPV.Services.Csv;
+using _10xPV.Services.Csv.Contracts;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace _10xPV.Controllers;
 
 public class ClimateImportController : Controller
 {
     private const long MaxFileSizeBytes = 10 * 1024 * 1024;
+    private readonly ICsvImportService _csvImportService;
+    private readonly ILogger<ClimateImportController> _logger;
+
+    public ClimateImportController(ICsvImportService csvImportService, ILogger<ClimateImportController> logger)
+    {
+        _csvImportService = csvImportService;
+        _logger = logger;
+    }
 
     [HttpGet]
     public IActionResult Index()
@@ -20,22 +32,83 @@ public class ClimateImportController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Index(ClimateImportFormViewModel form)
+    public async Task<IActionResult> Index(ClimateImportFormViewModel form)
     {
         ValidateForm(form);
 
-        var viewModel = new ClimateImportPageViewModel
+        var pageViewModel = new ClimateImportPageViewModel
         {
             Form = form
         };
 
         if (!ModelState.IsValid)
         {
-            return View(viewModel);
+            return View(pageViewModel);
         }
 
-        TempData["ImportNotImplemented"] = "Integracja parsera CSV zostanie dodana w fazie 2.";
-        return View(viewModel);
+        try
+        {
+            using var csvStream = form.File!.OpenReadStream();
+            var cancellationToken = HttpContext?.RequestAborted ?? CancellationToken.None;
+            var importResult = await _csvImportService.ImportAsync(
+                csvStream,
+                form.SchemaType!.Value,
+                cancellationToken);
+
+            pageViewModel = new ClimateImportPageViewModel
+            {
+                Form = form,
+                Summary = new ClimateImportSummaryViewModel
+                {
+                    TotalRows = importResult.TotalRows,
+                    ValidRows = importResult.ValidRows,
+                    InvalidRows = importResult.InvalidRows,
+                    StatusMessage = BuildStatusMessage(importResult)
+                },
+                Errors = importResult.Errors
+                    .Select(MapError)
+                    .ToArray()
+            };
+
+            return View(pageViewModel);
+        }
+        catch (OperationCanceledException)
+        {
+            ModelState.AddModelError(string.Empty, "Import anulowany.");
+            return View(pageViewModel);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Nieoczekiwany błąd podczas importu CSV.");
+            ModelState.AddModelError(string.Empty, "Wystąpił nieoczekiwany błąd podczas importu. Spróbuj ponownie.");
+            return View(pageViewModel);
+        }
+    }
+
+    private static ClimateImportErrorViewModel MapError(CsvRowError error)
+    {
+        return new ClimateImportErrorViewModel
+        {
+            LineNumber = error.LineNumber,
+            Field = error.Field,
+            Code = error.Code,
+            Message = error.Message
+        };
+    }
+
+    private static string BuildStatusMessage(CsvImportResult importResult)
+    {
+        if (importResult.InvalidRows == 0)
+        {
+            return "Import zakończony sukcesem.";
+        }
+
+        if (importResult.ValidRows == 0)
+        {
+            return "Import zakończony z błędami.";
+        }
+
+        return "Import zakończony częściowym sukcesem.";
     }
 
     private void ValidateForm(ClimateImportFormViewModel form)
