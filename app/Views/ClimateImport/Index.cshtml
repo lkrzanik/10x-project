@@ -26,8 +26,8 @@
                     <label asp-for="Form.SchemaType" class="form-label">Schemat importu</label>
                     <select asp-for="Form.SchemaType" class="form-select">
                         <option value="">-- Wybierz schemat --</option>
-                        <option value="@CsvSchemaType.Sensor">Sensor</option>
-                        <option value="@CsvSchemaType.Weather">Weather</option>
+                        <option value="@CsvSchemaType.Sensor">Czujnik</option>
+                        <option value="@CsvSchemaType.Weather">Pogoda</option>
                     </select>
                     <span asp-validation-for="Form.SchemaType" class="text-danger"></span>
                 </div>

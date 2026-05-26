@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Instalacja fotowoltaiczna na dachu domu</title>
+  <desc id="desc">Ilustracja domu jednorodzinnego z panelami fotowoltaicznymi na dachu.</desc>
+
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#bfe7ff" />
+      <stop offset="100%" stop-color="#ecf8ff" />
+    </linearGradient>
+    <linearGradient id="grass" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#8cd17d" />
+      <stop offset="100%" stop-color="#5ea95b" />
+    </linearGradient>
+    <linearGradient id="roof" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#a4453e" />
+      <stop offset="100%" stop-color="#7a2f2a" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="700" fill="url(#sky)" />
+  <circle cx="1050" cy="110" r="58" fill="#ffd76a" />
+  <rect y="520" width="1200" height="180" fill="url(#grass)" />
+
+  <rect x="330" y="290" width="540" height="260" rx="8" fill="#f5efe6" stroke="#d8cec0" stroke-width="4"/>
+  <polygon points="300,320 600,150 900,320" fill="url(#roof)" stroke="#6a2521" stroke-width="4"/>
+
+  <g transform="translate(470 232)">
+    <rect width="260" height="90" rx="4" fill="#1c2f45" stroke="#122132" stroke-width="3"/>
+    <line x1="65" y1="0" x2="65" y2="90" stroke="#3f5c78" stroke-width="2"/>
+    <line x1="130" y1="0" x2="130" y2="90" stroke="#3f5c78" stroke-width="2"/>
+    <line x1="195" y1="0" x2="195" y2="90" stroke="#3f5c78" stroke-width="2"/>
+    <line x1="0" y1="30" x2="260" y2="30" stroke="#3f5c78" stroke-width="2"/>
+    <line x1="0" y1="60" x2="260" y2="60" stroke="#3f5c78" stroke-width="2"/>
+  </g>
+
+  <rect x="560" y="430" width="90" height="120" rx="4" fill="#c28f64" stroke="#9a6d4f" stroke-width="3"/>
+  <rect x="390" y="360" width="110" height="90" fill="#d8eefc" stroke="#9ec6db" stroke-width="4"/>
+  <rect x="700" y="360" width="110" height="90" fill="#d8eefc" stroke="#9ec6db" stroke-width="4"/>
+
+</svg>
