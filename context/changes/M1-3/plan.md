@@ -150,7 +150,10 @@ Uruchomienia lokalne (Windows/PowerShell):
 
 ## Progress
 
-- [ ] F1 — Endpoint i model strony importu
+- [x] F1 — Endpoint i model strony importu
+  - ✅ Zrealizowano: kontroler `ClimateImportController` (GET/POST), walidacja uploadu (brak pliku, 0 B, rozszerzenie `.csv`, limit 10 MB, brak schematu), modele strony importu, link nawigacyjny i testy kontrolera.
+  - ✅ Weryfikacja: `dotnet build` oraz `dotnet test` (9/9) przechodzą.
+  - 🔖 Commit: `198cac3`
 - [ ] F2 — Integracja parsera i prezentacja wyników
 - [ ] F3 — Gotowość integracyjna pod persistence i M1-4
 

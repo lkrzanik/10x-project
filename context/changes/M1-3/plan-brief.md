@@ -25,6 +25,6 @@ Dostarczyć UI importu CSV dla zalogowanego użytkownika: upload pliku, wybór s
 - `dotnet test`
 
 ## Progress
-- [ ] F1
+- [x] F1
 - [ ] F2
 - [ ] F3

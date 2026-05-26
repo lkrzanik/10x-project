@@ -14,8 +14,10 @@ Roadmap Milestone 1, element M1-3 ([context/foundation/roadmap.md](context/found
 
 ## Status
 
-🟡 Planned
+🟡 In progress
 
 ## Progress
+
+- 2026-05-26 — F1 zakończona (`198cac3`): endpoint MVC importu, modele strony, walidacja formularza i testy kontrolera.
 
 <!-- Updated by /10x-implement -->
