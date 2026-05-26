@@ -26,13 +26,13 @@ Właściciel domu chce podjąć świadomą decyzję o doborze inwertera i magazy
 - Logowanie jednego użytkownika (jedno konto).
 - Sesja z timeoutem.
 
-### FR-2: Import danych pomiarowych (CSV)
+### FR-2: Import danych pomiarowych (Sensor) (CSV)
 - Upload pliku CSV z urządzenia pomiarowego.
 - Predefiniowany format: `timestamp, temperature_c, humidity_pct` (interwał 30 min).
 - Walidacja formatu i duplikatów.
 - Przechowywanie zaimportowanych rekordów w bazie danych.
 
-### FR-3: Import danych pogodowych (CSV)
+### FR-3: Import danych pogodowych (Weather) (CSV)
 - Upload pliku CSV z danymi pogodowymi.
 - Predefiniowany format: `timestamp, temperature_c, humidity_pct, cloud_cover_pct`.
 - Interwał czasowy może się różnić od danych pomiarowych.
