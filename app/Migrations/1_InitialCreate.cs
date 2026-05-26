@@ -10,34 +10,41 @@ namespace _10xPV.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
+            try
+            {
+                migrationBuilder.DropTable(
+                    name: "AspNetRoleClaims");
 
-            migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
+                migrationBuilder.DropTable(
+                 name: "AspNetUserClaims");
 
-            migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
+                migrationBuilder.DropTable(
+                   name: "AspNetUserLogins");
 
-            migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
+                migrationBuilder.DropTable(
+                    name: "AspNetUserRoles");
 
-            migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
+                migrationBuilder.DropTable(
+                    name: "AspNetUserTokens");
 
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                migrationBuilder.DropTable(
+                    name: "AspNetRoles");
 
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                migrationBuilder.DropTable(
+                    name: "AspNetUsers");
 
-            migrationBuilder.DropTable(
-                name: "SensorReadings");
+            }
+            catch { }
 
-            migrationBuilder.DropTable(
-                name: "WeatherReadings");
+            try
+            {
+                migrationBuilder.DropTable(
+                    name: "SensorReadings");
 
-
+                migrationBuilder.DropTable(
+                    name: "WeatherReadings");
+            }
+            catch { }
         }
 
         /// <inheritdoc />
