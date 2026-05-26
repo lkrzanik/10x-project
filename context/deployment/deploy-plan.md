@@ -89,14 +89,14 @@ az webapp config appsettings set --resource-group rg-10xProject --name app-10xPr
 ```
 - Typ: ⚠️ RĘCZNA BRAMKA — wymaga hasła
 
-### Krok 10: Konfiguracja App Settings (OpenAI — przyszłościowo)
+### Krok 11: Konfiguracja App Settings (OpenAI — przyszłościowo)
 ```
 az webapp config appsettings set --resource-group rg-10xProject --name app-10xProject --settings "OpenAIApiKey=<KEY>"
 
 ```
 - Typ: ⚠️ RĘCZNA BRAMKA — gdy klucz będzie potrzebny
 
-### Krok 11: Weryfikacja
+### Krok 12: Weryfikacja
 ```
 az webapp browse --resource-group rg-10xProject --name app-10xProject
 az webapp deployment source show --resource-group rg-10xProject --name app-10xProject
@@ -104,7 +104,7 @@ az webapp log tail --resource-group rg-10xProject --name app-10xProject
 ```
 - Oczekiwany wynik: strona Home/Index ładuje się, deployment source wskazuje GitHub `main`
 
-### Krok 12: Test auto-deploy
+### Krok 13: Test auto-deploy
 ```
 git commit --allow-empty -m "test: verify auto-deploy"
 git push origin main
