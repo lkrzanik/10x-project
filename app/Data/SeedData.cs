@@ -10,9 +10,10 @@ public static class SeedData
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
         var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
-        var adminEmail = "admin@10xpv.local";
+        var adminEmail = config["AdminEmail"] 
+            ?? throw new InvalidOperationException("AdminEmail not configured.");
         var adminPassword = config["AdminPassword"] 
-            ?? throw new InvalidOperationException("AdminPassword not configured. Use user-secrets.");
+            ?? throw new InvalidOperationException("AdminPassword not configured.");
 
         var existingUser = await userManager.FindByEmailAsync(adminEmail);
         if (existingUser is null)

@@ -77,6 +77,7 @@ az sql server firewall-rule create --resource-group rg-10xProject --server sql-1
 
 ### Krok 9: Konfiguracja użytkownika
 ```
+az webapp config appsettings set --resource-group rg-10xProject --name app-10xProject --settings "AdminEmail=admin@10xpv.local"
 az webapp config appsettings set --resource-group rg-10xProject --name app-10xProject --settings "AdminPassword=<PASSWORD>"
 
 ```
