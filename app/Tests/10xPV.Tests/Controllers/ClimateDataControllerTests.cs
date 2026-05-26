@@ -11,7 +11,19 @@ namespace _10xPV.Tests.Controllers;
 public class ClimateDataControllerTests
 {
     [Fact]
-    public async Task Index_DefaultQuery_ReturnsSensorRowsWithPaginationMetadata()
+    public async Task Index_DefaultRoute_RedirectsToSensorAction()
+    {
+        await using var dbContext = CreateDbContext();
+        var sut = CreateSut(dbContext);
+
+        var result = sut.Index();
+
+        var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal(nameof(ClimateDataController.Sensor), redirectResult.ActionName);
+    }
+
+    [Fact]
+    public async Task Sensor_DefaultQuery_ReturnsSensorRowsWithPaginationMetadata()
     {
         await using var dbContext = CreateDbContext();
         dbContext.SensorReadings.AddRange(
@@ -25,7 +37,7 @@ public class ClimateDataControllerTests
 
         var sut = CreateSut(dbContext);
 
-        var result = await sut.Index();
+    var result = await sut.Sensor();
 
         var viewResult = Assert.IsType<ViewResult>(result);
         var model = Assert.IsType<ClimateDataPageViewModel>(viewResult.Model);
@@ -42,7 +54,7 @@ public class ClimateDataControllerTests
     }
 
     [Fact]
-    public async Task Index_WithDateRange_ReturnsOnlyRowsWithinInclusiveBounds()
+    public async Task Sensor_WithDateRange_ReturnsOnlyRowsWithinInclusiveBounds()
     {
         await using var dbContext = CreateDbContext();
         dbContext.SensorReadings.AddRange(
@@ -53,8 +65,7 @@ public class ClimateDataControllerTests
 
         var sut = CreateSut(dbContext);
 
-        var result = await sut.Index(
-            dataSource: DataSource.Sensor,
+        var result = await sut.Sensor(
             from: new DateOnly(2026, 2, 2),
             to: new DateOnly(2026, 2, 2),
             page: 1,
@@ -68,7 +79,7 @@ public class ClimateDataControllerTests
     }
 
     [Fact]
-    public async Task Index_WhenRequestedPageExceedsTotalPages_NormalizesToLastPage()
+    public async Task Weather_WhenRequestedPageExceedsTotalPages_NormalizesToLastPage()
     {
         await using var dbContext = CreateDbContext();
 
@@ -88,8 +99,7 @@ public class ClimateDataControllerTests
 
         var sut = CreateSut(dbContext);
 
-        var result = await sut.Index(
-            dataSource: DataSource.Weather,
+        var result = await sut.Weather(
             page: 10,
             pageSize: 50);
 
@@ -106,13 +116,12 @@ public class ClimateDataControllerTests
     }
 
     [Fact]
-    public async Task Index_WhenFromDateIsAfterToDate_ReturnsValidationErrorWithoutThrowing()
+    public async Task Sensor_WhenFromDateIsAfterToDate_ReturnsValidationErrorWithoutThrowing()
     {
         await using var dbContext = CreateDbContext();
         var sut = CreateSut(dbContext);
 
-        var result = await sut.Index(
-            dataSource: DataSource.Sensor,
+        var result = await sut.Sensor(
             from: new DateOnly(2026, 4, 10),
             to: new DateOnly(2026, 4, 1),
             page: 1,
@@ -129,7 +138,7 @@ public class ClimateDataControllerTests
     }
 
     [Fact]
-    public async Task Index_WhenPageIsLessThanOne_NormalizesToFirstPage()
+    public async Task Sensor_WhenPageIsLessThanOne_NormalizesToFirstPage()
     {
         await using var dbContext = CreateDbContext();
 
@@ -140,8 +149,7 @@ public class ClimateDataControllerTests
 
         var sut = CreateSut(dbContext);
 
-        var result = await sut.Index(
-            dataSource: DataSource.Sensor,
+        var result = await sut.Sensor(
             page: 0,
             pageSize: 50);
 
@@ -154,7 +162,7 @@ public class ClimateDataControllerTests
     }
 
     [Fact]
-    public async Task Index_WithOnlyToDate_AppliesUpperBoundFilter()
+    public async Task Weather_WithOnlyToDate_AppliesUpperBoundFilter()
     {
         await using var dbContext = CreateDbContext();
 
@@ -165,8 +173,7 @@ public class ClimateDataControllerTests
 
         var sut = CreateSut(dbContext);
 
-        var result = await sut.Index(
-            dataSource: DataSource.Weather,
+        var result = await sut.Weather(
             to: new DateOnly(2026, 5, 1),
             page: 1,
             pageSize: 50);
