@@ -1,0 +1,123 @@
+@model _10xPV.Models.ClimateImport.ClimateDataPageViewModel
+@{
+    ViewData["Title"] = "Dane klimatyczne";
+}
+
+<h1 class="mb-4">Dane klimatyczne</h1>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger" role="alert">
+        @foreach (var modelError in ViewData.ModelState.Values.SelectMany(value => value.Errors))
+        {
+            <div>@modelError.ErrorMessage</div>
+        }
+    </div>
+}
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label class="form-label" for="dataSource">Źródło danych</label>
+        <select id="dataSource" name="dataSource" class="form-select" asp-for="Filter.DataSource" asp-items="Html.GetEnumSelectList<DataSource>()"></select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label" for="from">Od</label>
+        <input id="from" type="date" name="from" class="form-control" value="@(Model.Filter.From?.ToString("yyyy-MM-dd"))" />
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label" for="to">Do</label>
+        <input id="to" type="date" name="to" class="form-control" value="@(Model.Filter.To?.ToString("yyyy-MM-dd"))" />
+    </div>
+
+    <input type="hidden" name="pageSize" value="@Model.PageSize" />
+
+    <div class="col-md-3 d-flex align-items-end gap-2">
+        <button type="submit" class="btn btn-primary">Filtruj</button>
+        <a asp-action="Index" asp-controller="ClimateData" class="btn btn-outline-secondary">Wyczyść</a>
+    </div>
+</form>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <div>
+        <span class="fw-semibold">Źródło:</span> @Model.Filter.DataSource
+    </div>
+    <div>
+        <span class="fw-semibold">Liczba rekordów:</span> @Model.TotalCount
+    </div>
+    <div>
+        <span class="fw-semibold">Strona:</span> @Model.CurrentPage / @(Model.TotalPages == 0 ? 1 : Model.TotalPages)
+    </div>
+    <div>
+        <span class="fw-semibold">Rozmiar strony:</span> @Model.PageSize
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Timestamp (UTC)</th>
+                <th scope="col">Temperature</th>
+                <th scope="col">Humidity</th>
+                <th scope="col">CloudCover</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Rows.Count == 0)
+            {
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">Brak danych dla wybranego zakresu.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <td>@row.Timestamp.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@(row.Temperature.HasValue ? row.Temperature.Value.ToString("F2") : "-")</td>
+                        <td>@(row.Humidity.HasValue ? row.Humidity.Value.ToString("F2") : "-")</td>
+                        <td>@(row.CloudCover.HasValue ? row.CloudCover.Value.ToString("F2") : "-")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Paginacja danych klimatycznych" class="mt-3">
+        <ul class="pagination mb-0">
+            <li class="page-item @(Model.HasPreviousPage ? string.Empty : "disabled")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-controller="ClimateData"
+                   asp-route-dataSource="@Model.Filter.DataSource"
+                   asp-route-from="@Model.Filter.From"
+                   asp-route-to="@Model.Filter.To"
+                   asp-route-page="@(Model.CurrentPage - 1)"
+                   asp-route-pageSize="@Model.PageSize"
+                   aria-label="Poprzednia strona">Poprzednia</a>
+            </li>
+
+            <li class="page-item disabled">
+                <span class="page-link">@Model.CurrentPage / @Model.TotalPages</span>
+            </li>
+
+            <li class="page-item @(Model.HasNextPage ? string.Empty : "disabled")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-controller="ClimateData"
+                   asp-route-dataSource="@Model.Filter.DataSource"
+                   asp-route-from="@Model.Filter.From"
+                   asp-route-to="@Model.Filter.To"
+                   asp-route-page="@(Model.CurrentPage + 1)"
+                   asp-route-pageSize="@Model.PageSize"
+                   aria-label="Następna strona">Następna</a>
+            </li>
+        </ul>
+    </nav>
+}

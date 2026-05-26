@@ -128,6 +128,56 @@ public class ClimateDataControllerTests
         Assert.Equal(0, model.TotalCount);
     }
 
+    [Fact]
+    public async Task Index_WhenPageIsLessThanOne_NormalizesToFirstPage()
+    {
+        await using var dbContext = CreateDbContext();
+
+        dbContext.SensorReadings.AddRange(
+            new SensorReading { Id = Guid.NewGuid(), Timestamp = new DateTimeOffset(2026, 4, 1, 10, 0, 0, TimeSpan.Zero), Temperature = 10.0, Humidity = 50.0 },
+            new SensorReading { Id = Guid.NewGuid(), Timestamp = new DateTimeOffset(2026, 4, 1, 11, 0, 0, TimeSpan.Zero), Temperature = 11.0, Humidity = 51.0 });
+        await dbContext.SaveChangesAsync();
+
+        var sut = CreateSut(dbContext);
+
+        var result = await sut.Index(
+            dataSource: DataSource.Sensor,
+            page: 0,
+            pageSize: 50);
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<ClimateDataPageViewModel>(viewResult.Model);
+
+        Assert.Equal(1, model.CurrentPage);
+        Assert.Equal(1, model.TotalPages);
+        Assert.Equal(2, model.Rows.Count);
+    }
+
+    [Fact]
+    public async Task Index_WithOnlyToDate_AppliesUpperBoundFilter()
+    {
+        await using var dbContext = CreateDbContext();
+
+        dbContext.WeatherReadings.AddRange(
+            new WeatherReading { Id = Guid.NewGuid(), Timestamp = new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero), Temperature = 18.0, Humidity = 60.0, CloudCover = 30.0 },
+            new WeatherReading { Id = Guid.NewGuid(), Timestamp = new DateTimeOffset(2026, 5, 2, 8, 0, 0, TimeSpan.Zero), Temperature = 19.0, Humidity = 61.0, CloudCover = 40.0 });
+        await dbContext.SaveChangesAsync();
+
+        var sut = CreateSut(dbContext);
+
+        var result = await sut.Index(
+            dataSource: DataSource.Weather,
+            to: new DateOnly(2026, 5, 1),
+            page: 1,
+            pageSize: 50);
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<ClimateDataPageViewModel>(viewResult.Model);
+
+        var row = Assert.Single(model.Rows);
+        Assert.Equal(new DateTimeOffset(2026, 5, 1, 8, 0, 0, TimeSpan.Zero), row.Timestamp);
+    }
+
     private static ClimateDataController CreateSut(AppDbContext dbContext)
     {
         return new ClimateDataController(dbContext, NullLogger<ClimateDataController>.Instance);
