@@ -135,7 +135,7 @@ Uruchomienia lokalne (Windows/PowerShell):
 
 ## Progress
 
-- [ ] F1 — Kontrakt parsera i modele
+- [x] F1 — Kontrakt parsera i modele
 - [ ] F2 — Implementacja parsera + walidacja
 - [ ] F3 — Testy i gotowość integracyjna
 
