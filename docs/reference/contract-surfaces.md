@@ -14,7 +14,8 @@ Rejestr nazw i „powierzchni kontraktowych” projektu (API, zdarzenia, payload
 
 | Name | Direction | Owner | Status | Notes |
 | --- | --- | --- | --- | --- |
-| _TBD_ | _TBD_ | _TBD_ | proposed | |
+| `ClimateImport/Index` (GET) | UI -> MVC | `_10xPV.Controllers.ClimateImportController` | active | Renderuje formularz importu CSV i ostatni wynik.
+| `ClimateImport/Index` (POST) | UI -> MVC | `_10xPV.Controllers.ClimateImportController` | active | Upload pliku `.csv`, walidacja, uruchomienie importu, prezentacja podsumowania i błędów.
 
 ### Events / Messages
 
@@ -26,7 +27,8 @@ Rejestr nazw i „powierzchni kontraktowych” projektu (API, zdarzenia, payload
 
 | Name | Type | Invariants | Status | Notes |
 | --- | --- | --- | --- | --- |
-| _TBD_ | _TBD_ | _TBD_ | proposed | |
+| `IClimateImportOrchestrator.ImportAsync(Stream, CsvSchemaType, CancellationToken)` | Application service | Nie zmienia kontraktu UI; zwraca `CsvImportResult`; deleguje parser i persistence adapter | active | Stabilny punkt wejścia dla kontrolera importu.
+| `IClimateImportPersistenceAdapter.PersistValidRowsAsync(CsvImportResult, CancellationToken)` | Persistence seam | Side-effect optional; może być no-op; nie wpływa na wynik walidacji parsera | active | W M1-3 podpięte `NoOpClimateImportPersistenceAdapter`, docelowo implementacja DB w M1-4.
 
 ## Notes
 

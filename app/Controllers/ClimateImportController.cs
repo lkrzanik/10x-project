@@ -1,5 +1,5 @@
 using _10xPV.Models.ClimateImport;
-using _10xPV.Services.Csv;
+using _10xPV.Services.ClimateImport;
 using _10xPV.Services.Csv.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +10,12 @@ namespace _10xPV.Controllers;
 public class ClimateImportController : Controller
 {
     private const long MaxFileSizeBytes = 10 * 1024 * 1024;
-    private readonly ICsvImportService _csvImportService;
+    private readonly IClimateImportOrchestrator _climateImportOrchestrator;
     private readonly ILogger<ClimateImportController> _logger;
 
-    public ClimateImportController(ICsvImportService csvImportService, ILogger<ClimateImportController> logger)
+    public ClimateImportController(IClimateImportOrchestrator climateImportOrchestrator, ILogger<ClimateImportController> logger)
     {
-        _csvImportService = csvImportService;
+        _climateImportOrchestrator = climateImportOrchestrator;
         _logger = logger;
     }
 
@@ -50,7 +50,7 @@ public class ClimateImportController : Controller
         {
             using var csvStream = form.File!.OpenReadStream();
             var cancellationToken = HttpContext?.RequestAborted ?? CancellationToken.None;
-            var importResult = await _csvImportService.ImportAsync(
+            var importResult = await _climateImportOrchestrator.ImportAsync(
                 csvStream,
                 form.SchemaType!.Value,
                 cancellationToken);

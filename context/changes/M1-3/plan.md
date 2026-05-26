@@ -52,6 +52,10 @@ Wynik ma być gotowy do rozszerzenia o zapis do bazy i podgląd tabelaryczny w M
   Dodanie linku nawigacyjnego do ekranu importu.
 - `app/Tests/10xPV.Tests/Controllers/ClimateImportControllerTests.cs`  
   Testy kontrolera: happy path + błędy wejścia.
+- `app/Services/ClimateImport/IClimateImportOrchestrator.cs` + `ClimateImportOrchestrator.cs`  
+  Orkiestracja importu (`parser -> persistence adapter`) bez zmiany kontraktu kontrolera/UI.
+- `app/Services/ClimateImport/IClimateImportPersistenceAdapter.cs` + `NoOpClimateImportPersistenceAdapter.cs`  
+  Punkt rozszerzenia pod zapis poprawnych rekordów do DB w M1-4.
 
 ## 4.1) Kontrakt wejścia/wyjścia (MVP)
 
@@ -118,8 +122,8 @@ Wynik ma być gotowy do rozszerzenia o zapis do bazy i podgląd tabelaryczny w M
 ## 6) Ryzyka i decyzje robocze
 
 - **Rozbieżność modelu parsera i encji DB:**
-  - Parser `SensorCsvRow` (`SensorId`, `Value`, `Unit`) i `WeatherCsvRow` (`TemperatureC`, `WindSpeedMs`, `IrradianceWm2`) nie odwzorowują się 1:1 na obecne encje `SensorReading`/`WeatherReading` (`Temperature`, `Humidity`, `CloudCover`).
-  - Decyzja dla M1-3: UI i podsumowanie importu dostarczamy niezależnie od finalnej mapy do encji; mapping strategy finalizujemy na styku M1-3/M1-4 lub dedykowanej zmianie.
+  - Obecne kontrakty parsera są zbliżone do encji (`Temperature`, `Humidity`, `CloudCover`), ale nadal istnieje warstwa translacji domenowej (m.in. `DateTime` -> `DateTimeOffset`, strategia identyfikatorów, reguły deduplikacji i decyzje transakcyjne).
+  - Decyzja dla M1-3: wprowadzamy warstwę `IClimateImportOrchestrator` oraz `IClimateImportPersistenceAdapter` (na razie `NoOp`), dzięki czemu `ClimateImportController` i kontrakt UI pozostają stabilne, a mapowanie/persistencja mogą zostać domknięte w M1-4 bez łamania endpointu.
 - **Duże pliki:**
   - W MVP brak dedykowanego stronicowania błędów; możliwe ograniczenie liczby renderowanych błędów (np. top 200) jeśli UX tego wymaga.
 
@@ -159,6 +163,10 @@ Uruchomienia lokalne (Windows/PowerShell):
   - ✅ UI: `Views/ClimateImport/Index.cshtml` pokazuje metryki + alert statusu i listę błędów per wiersz; UX „w trakcie importu” (disable submit + komunikat) aktywny.
   - ✅ Weryfikacja: `dotnet build` (PASS, ostrzeżenia NU1903 istniejące), `dotnet test` (11/11 PASS), brak błędów diagnostycznych w workspace.
   - 🔖 Commit: _(pending)_
-- [ ] F3 — Gotowość integracyjna pod persistence i M1-4
+- [x] F3 — Gotowość integracyjna pod persistence i M1-4
+  - ✅ Zrealizowano: dodano `IClimateImportOrchestrator` + `ClimateImportOrchestrator` oraz punkt rozszerzenia `IClimateImportPersistenceAdapter` (implementacja `NoOp`), co stabilizuje kontrakt kontrolera/UI pod M1-4.
+  - ✅ Decyzja integracyjna: mapowanie parser→encje oraz zapis do DB będą domknięte przez adapter persistence; obecna warstwa orchestratora izoluje UI od zmian modelu trwałości.
+  - ✅ Testy: rozszerzono `ClimateImportControllerTests` o scenariusz nieoczekiwanego wyjątku (błąd parsera/IO) obok happy path i walidacji.
+  - 🔖 Commit: `e306254`
 
 <!-- Updated by /10x-implement: phase status, commit SHA -->
