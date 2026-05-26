@@ -75,15 +75,24 @@ az sql server firewall-rule create --resource-group rg-10xProject --server sql-1
 ```
 - Typ: zautomatyzowany
 
-### Krok 9: Konfiguracja Connection String
+### Krok 9: Konfiguracja użytkownika
 ```
-az webapp config connection-string set --resource-group rg-10xProject --name app-10xProject --connection-string-type SQLAzure --settings DefaultConnection="Server=tcp:sql-10xProject.database.windows.net,1433;Database=db-10xProject;User ID=10xpvadmin;Password=<PASSWORD>;Encrypt=true;TrustServerCertificate=false;"
+az webapp config appsettings set --resource-group rg-10xProject --name app-10xProject --settings "AdminPassword=<PASSWORD>"
+
+```
+- Typ: ⚠️ RĘCZNA BRAMKA — wymaga hasła
+
+### Krok 10: Konfiguracja Connection String
+```
+az webapp config appsettings set --resource-group rg-10xProject --name app-10xProject --settings "ConnectionStrings:DefaultConnection=Server=tcp:sql-10xProject.database.windows.net,1433;Database=db-10xProject;User ID=10xpvadmin;Password=<PASSWORD>;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+
 ```
 - Typ: ⚠️ RĘCZNA BRAMKA — wymaga hasła
 
 ### Krok 10: Konfiguracja App Settings (OpenAI — przyszłościowo)
 ```
-az webapp config appsettings set --resource-group rg-10xProject --name app-10xProject --settings OpenAI__ApiKey="<KEY>"
+az webapp config appsettings set --resource-group rg-10xProject --name app-10xProject --settings "OpenAIApiKey=<KEY>"
+
 ```
 - Typ: ⚠️ RĘCZNA BRAMKA — gdy klucz będzie potrzebny
 
