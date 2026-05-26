@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using _10xPV.Data;
+using _10xPV.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,9 @@ builder.Services.AddControllersWithViews(opts =>
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     opts.Filters.Add(new AuthorizeFilter(policy));
 });
+
+builder.Services.AddScoped<IClimateDataValidator, ClimateDataValidator>();
+builder.Services.AddScoped<IDeduplicationService, DeduplicationService>();
 
 var app = builder.Build();
 

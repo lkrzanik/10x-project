@@ -76,6 +76,6 @@ Zdefiniować dwie niezależne encje EF Core (`SensorReading`, `WeatherReading`) 
 ## Progress
 
 <!-- Updated by /10x-implement -->
-- [ ] Phase 1 — Encje i konfiguracja EF Core → —
-- [ ] Phase 2 — Walidacja i deduplikacja → —
+- [x] Phase 1 — Encje i konfiguracja EF Core → done
+- [x] Phase 2 — Walidacja i deduplikacja → done
 - [ ] Phase 3 — Migracja EF Core → —
