@@ -167,8 +167,16 @@ Uruchomienia lokalne (Windows/PowerShell):
 
 ## Progress
 
-- [ ] F1 — Persistence adapter (domknięcie import -> DB)
+- [x] F1 — Persistence adapter (domknięcie import -> DB)
 - [ ] F2 — Query + endpoint tabeli z filtrem i paginacją
 - [ ] F3 — UI, testy i stabilizacja kontraktu
+
+### 2026-05-26 — F1 implementacja
+
+- Dodano `ClimateImportPersistenceAdapter` (EF Core) i podpięto go w DI zamiast `NoOpClimateImportPersistenceAdapter`.
+- Dodano deduplikację po `Timestamp` dla `Sensor` i `Weather` (duplikaty w bazie + duplikaty w bieżącym batchu).
+- Kontrakt `ClimateImportController` i orchestratora pozostawiono bez zmian.
+- Weryfikacja: `dotnet build` ✅, `dotnet test .\Tests\10xPV.Tests\10xPV.Tests.csproj` ✅ (14/14).
+- Commit SHA: _niezapisany w tej sesji (brak commita)_
 
 <!-- Updated by /10x-plan -->

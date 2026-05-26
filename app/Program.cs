@@ -41,7 +41,7 @@ builder.Services.AddControllersWithViews(opts =>
 builder.Services.AddScoped<IClimateDataValidator, ClimateDataValidator>();
 builder.Services.AddScoped<IDeduplicationService, DeduplicationService>();
 builder.Services.AddScoped<ICsvImportService, CsvImportService>();
-builder.Services.AddScoped<IClimateImportPersistenceAdapter, NoOpClimateImportPersistenceAdapter>();
+builder.Services.AddScoped<IClimateImportPersistenceAdapter, ClimateImportPersistenceAdapter>();
 builder.Services.AddScoped<IClimateImportOrchestrator, ClimateImportOrchestrator>();
 
 var app = builder.Build();
