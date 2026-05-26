@@ -12,7 +12,7 @@ using _10xPV.Data;
 namespace _10xPV.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260525221845_AddIdentity")]
+    [Migration("2_AddIdentity")]
     partial class AddIdentity
     {
         /// <inheritdoc />

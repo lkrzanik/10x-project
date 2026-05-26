@@ -9,10 +9,10 @@ using _10xPV.Data;
 
 #nullable disable
 
-namespace _10xPV.Data.Migrations
+namespace _10xPV.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260526082516_AddClimateModels")]
+    [Migration("3_AddClimateModels")]
     partial class AddClimateModels
     {
         /// <inheritdoc />
