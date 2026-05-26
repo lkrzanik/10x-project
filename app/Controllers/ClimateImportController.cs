@@ -98,7 +98,9 @@ public class ClimateImportController : Controller
 
     private static string BuildStatusMessage(CsvImportResult importResult)
     {
-        if (importResult.InvalidRows == 0)
+        var hasErrors = importResult.Errors.Count > 0;
+
+        if (importResult.InvalidRows == 0 && !hasErrors)
         {
             return "Import zakończony sukcesem.";
         }
