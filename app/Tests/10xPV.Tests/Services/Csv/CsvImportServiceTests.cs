@@ -54,6 +54,24 @@ public class CsvImportServiceTests
     }
 
     [Fact]
+    public async Task ImportAsync_WeatherDateOnlyWithSlash_ReturnsSingleValidWeatherRow()
+    {
+        const string csv = "Timestamp,Temperature,Humidity,CloudCover\n2026/02/01,10.1,44.2,55\n";
+
+        await using var stream = CreateUtf8Stream(csv);
+        var result = await _sut.ImportAsync(stream, CsvSchemaType.Weather);
+
+        Assert.Equal(1, result.TotalRows);
+        Assert.Equal(1, result.ValidRows);
+        Assert.Equal(0, result.InvalidRows);
+        Assert.Empty(result.Errors);
+        Assert.Single(result.WeatherRows);
+
+        var row = result.WeatherRows[0];
+        Assert.Equal(new DateTime(2026, 2, 1), row.Timestamp);
+    }
+
+    [Fact]
     public async Task ImportAsync_InvalidHeaders_ReturnsHeaderInvalidError()
     {
         const string csv = "Timestamp,WrongField,Humidity\n2026-01-15T10:30:00,14.5,63.0\n";

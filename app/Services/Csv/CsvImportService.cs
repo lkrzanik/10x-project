@@ -5,7 +5,7 @@ namespace _10xPV.Services.Csv;
 
 public sealed class CsvImportService : ICsvImportService
 {
-    private static readonly string[] SupportedDateFormats = ["yyyy/MM/dd  HH:mm:ss", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-dd"];
+    private static readonly string[] SupportedDateFormats = ["MM/dd/yyyy", "yyyy-MM-dd", "yyyy/MM/dd", "MM/dd/yyyy HH:mm:ss", "yyyy/MM/dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd  HH:mm:ss", "MM/dd/yyyy  HH:mm:ss", "yyyy/MM/dd  HH:mm:ss", "yyyy-MM-ddTHH:mm:ss"];
 
     private static readonly string[] SensorHeaders =
     [
