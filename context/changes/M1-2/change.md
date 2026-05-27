@@ -13,8 +13,11 @@ Roadmap Milestone 1, element M1-2 ([context/foundation/roadmap.md](context/found
 
 ## Status
 
-🟡 Planned
+✅ Done
 
 ## Progress
 
+- [x] F1 — Kontrakt parsera i modele
+- [x] F2 — Implementacja parsera + walidacja
+- [x] F3 — Testy i gotowość integracyjna
 <!-- Updated by /10x-implement -->

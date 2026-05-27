@@ -14,11 +14,12 @@ Roadmap Milestone 1, element M1-3 ([context/foundation/roadmap.md](context/found
 
 ## Status
 
-🟡 In progress
+✅ Done
 
 ## Progress
 
-- 2026-05-26 — F1 zakończona (`198cac3`): endpoint MVC importu, modele strony, walidacja formularza i testy kontrolera.
-- 2026-05-26 — F2 zakończona: integracja parsera CSV w kontrolerze, mapowanie wyniku importu na UI oraz prezentacja podsumowania i błędów per wiersz; weryfikacja `dotnet build` + `dotnet test` (11/11).
+- [x] F1 — Endpoint i model strony importu
+- [x] F2 — Integracja parsera i prezentacja wyników
+- [x] F3 — Gotowość integracyjna pod persistence i M1-4
 
 <!-- Updated by /10x-implement -->

@@ -12,8 +12,11 @@ Roadmap Milestone 1, element M1-1
 
 ## Status
 
-🟡 In Progress
+✅ Done
 
 ## Progress
 
 <!-- Updated by /10x-implement -->
+- [x] Phase 1 — Encje i konfiguracja EF Core → done
+- [x] Phase 2 — Walidacja i deduplikacja → done
+- [x] Phase 3 — Migracja EF Core → done

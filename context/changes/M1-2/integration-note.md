@@ -28,17 +28,16 @@ Podłączyć parser CSV (`ICsvImportService`) do kontrolera importu w M1-3 i prz
 
 ### SensorCsvRow -> SensorReading
 
-- `Timestamp` -> `RecordedAtUtc` / `Timestamp` (zgodnie z nazwą docelowego modelu)
-- `SensorId` -> `SensorId`
-- `Value` -> `Value`
-- `Unit` -> `Unit`
+- `Timestamp` -> `RecordedAtUtc` / `Timestamp`
+- `Temperature` -> `Temperature`
+- `Humidity` -> `Humidity`
 
 ### WeatherCsvRow -> WeatherReading
 
 - `Timestamp` -> `RecordedAtUtc` / `Timestamp`
-- `TemperatureC` -> `TemperatureC`
-- `WindSpeedMs` -> `WindSpeedMs`
-- `IrradianceWm2` -> `IrradianceWm2`
+- `Temperature` -> `Temperature`
+- `Humidity` -> `Humidity`
+- `CloudCover` -> `CloudCover`
 
 ## Stabilne kody błędów dla UI
 

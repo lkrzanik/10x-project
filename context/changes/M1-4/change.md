@@ -14,10 +14,12 @@ Roadmap Milestone 1, element M1-4 ([context/foundation/roadmap.md](context/found
 
 ## Status
 
-🟡 In progress
+✅ Done
 
 ## Progress
 
-- 2026-05-26 — Zmiana zainicjalizowana i zaplanowana (`/10x-plan`).
+- [x] F1 — Persistence adapter
+- [x] F2 — Query + endpoint tabeli z filtrem i paginacją
+- [x] F3 — UI, testy i stabilizacja kontraktu
 
 <!-- Updated by /10x-plan -->
