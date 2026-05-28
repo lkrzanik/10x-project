@@ -1,5 +1,6 @@
 .github/**/*10x-*
 .github/copilot-instructions.md
+.github/prompts/skill-explainer.md
 /app/.vs
 /app/**/bin
 /app/**/obj
