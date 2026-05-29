@@ -1,5 +1,6 @@
 using _10xPV.Data;
 using _10xPV.Services;
+using _10xPV.Services.Correlation;
 using _10xPV.Services.ClimateImport;
 using _10xPV.Services.Csv;
 using Microsoft.AspNetCore.Authorization;
@@ -40,6 +41,7 @@ builder.Services.AddControllersWithViews(opts =>
 
 builder.Services.AddScoped<IClimateDataValidator, ClimateDataValidator>();
 builder.Services.AddScoped<IDeduplicationService, DeduplicationService>();
+builder.Services.AddScoped<IClimateCorrelationService, ClimateCorrelationService>();
 builder.Services.AddScoped<ICsvImportService, CsvImportService>();
 builder.Services.AddScoped<IClimateImportPersistenceAdapter, ClimateImportPersistenceAdapter>();
 builder.Services.AddScoped<IClimateImportOrchestrator, ClimateImportOrchestrator>();

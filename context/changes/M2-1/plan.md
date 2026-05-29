@@ -8,6 +8,16 @@ Zmiana: `M2-1`
 - `context/changes/M2-1/correlation-research-session/MathNet.Numerics/README.md`
 - `context/changes/M2-1/correlation-research-session/MathNet.Numerics/02-interpolation-linear.md`
 
+## Status realizacji planu
+
+- ✅ Phase 1 — zakończona (`serwis + DI + testy jednostkowe`)
+- ⏳ Phase 2 — pending (`MVC endpoint/widok + testy kontrolera`)
+- ⏳ Phase 3 — pending (`appsettings + IOptions + fail-fast walidacja`)
+
+Aktualizacja 2026-05-29:
+- Review phase 1: `PASS`
+- Quality gates: `dotnet build` PASS, `dotnet test` PASS (29/29)
+
 ## Cel zmiany
 
 Dostarczyć interpolację liniową pomiędzy seriami klimatycznymi (`SensorReading`, `WeatherReading`) jako fundament pod korelację danych w Milestone 2.

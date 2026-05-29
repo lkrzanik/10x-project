@@ -15,13 +15,17 @@ Roadmap Milestone 2, element M2-1 ([context/foundation/roadmap.md](context/found
 
 ## Status
 
-🟡 Planned
+🟡 In progress (F1 completed)
 
 ## Progress
 
-- [ ] F1 — Serwis interpolacji + DI + testy jednostkowe
+- [x] F1 — Serwis interpolacji + DI + testy jednostkowe
 - [ ] F2 — Integracja MVC (akcja + widok) + testy kontrolera
 - [ ] F3 — Konfiguracja progów (`appsettings` + `IOptions` + walidacja fail-fast)
+
+### Latest update
+
+- 2026-05-29: F1 zakończona. Dodano i zweryfikowano testy `ClimateCorrelationService` (w tym guard clauses dla `null`); quality gates: `dotnet build` PASS, `dotnet test` PASS (29/29).
 
 ## Key decisions (from plan)
 
