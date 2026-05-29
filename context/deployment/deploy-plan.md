@@ -65,7 +65,7 @@ az sql server create --name sql-10xProject --resource-group rg-10xProject --loca
 
 ### Krok 7: Utworzenie Azure SQL Database (Free tier)
 ```
-az sql db create --name db-10xProject --resource-group rg-10xProject --server sql-10xProject --capacity 1 --edition GeneralPurpose --compute-model Serverless --family Gen5 --max-size 6GB --auto-pause-delay 30
+az sql db create --name db-10xProject --resource-group rg-10xProject --server sql-10xProject --capacity 5 --edition Basic --max-size 2GB
 ```
 - Typ: zautomatyzowany
 
