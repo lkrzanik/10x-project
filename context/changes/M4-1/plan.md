@@ -5,8 +5,8 @@ Zmiana: `M4-1`
 
 ## Status realizacji planu
 
-- ⏳ Phase 1 — pending (`serwis + DI + testy jednostkowe`)
-- ⏳ Phase 2 — pending (`MVC akcja + widok potwierdzenia + testy kontrolera`)
+- ✅ Phase 1 — done (`serwis + DI + testy jednostkowe`)
+- ✅ Phase 2 — done (`MVC akcja + widok potwierdzenia + testy kontrolera`)
 
 ## Cel zmiany
 

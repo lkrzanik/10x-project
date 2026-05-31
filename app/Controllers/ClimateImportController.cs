@@ -1,6 +1,8 @@
 using _10xPV.Models.ClimateImport;
+using _10xPV.Services;
 using _10xPV.Services.ClimateImport;
 using _10xPV.Services.Csv.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,11 +13,13 @@ public class ClimateImportController : Controller
 {
     private const long MaxFileSizeBytes = 10 * 1024 * 1024;
     private readonly IClimateImportOrchestrator _climateImportOrchestrator;
+    private readonly IClimateDataResetService _resetService;
     private readonly ILogger<ClimateImportController> _logger;
 
-    public ClimateImportController(IClimateImportOrchestrator climateImportOrchestrator, ILogger<ClimateImportController> logger)
+    public ClimateImportController(IClimateImportOrchestrator climateImportOrchestrator, IClimateDataResetService resetService, ILogger<ClimateImportController> logger)
     {
         _climateImportOrchestrator = climateImportOrchestrator;
+        _resetService = resetService;
         _logger = logger;
     }
 
@@ -111,6 +115,25 @@ public class ClimateImportController : Controller
         }
 
         return "Import zakończony częściowym sukcesem.";
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetAllData()
+    {
+        try
+        {
+            await _resetService.DeleteAllAsync();
+            TempData["SuccessMessage"] = "Wszystkie dane klimatyczne zostały usunięte.";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Błąd podczas usuwania danych klimatycznych.");
+            TempData["ErrorMessage"] = "Wystąpił błąd podczas usuwania danych. Spróbuj ponownie.";
+        }
+
+        return RedirectToAction(nameof(Index));
     }
 
     private void ValidateForm(ClimateImportFormViewModel form)

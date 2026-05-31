@@ -7,6 +7,20 @@
 
 <div class="row">
     <div class="col-lg-8">
+        @if (TempData["SuccessMessage"] is string successMsg)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @successMsg
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zamknij"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] is string errorMsg)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @errorMsg
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zamknij"></button>
+            </div>
+        }
         <h1 class="mb-3">Import danych</h1>
         <p class="text-muted">Prześlij plik CSV i wybierz typ schematu danych do przetworzenia.</p>
 
@@ -90,6 +104,44 @@
                 </div>
             </section>
         }
+    </div>
+</div>
+
+<!-- Sekcja czyszczenia danych -->
+<div class="row mt-5">
+    <div class="col-lg-8">
+        <div class="card border-danger shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-danger">Wyczyść dane</h5>
+                <p class="card-text">Usuń wszystkie zaimportowane dane klimatyczne (czujnik i pogoda). Tej operacji nie można cofnąć.</p>
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmResetModal">
+                    Wyczyść wszystkie dane
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal potwierdzenia usunięcia -->
+<div class="modal fade" id="confirmResetModal" tabindex="-1" aria-labelledby="confirmResetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmResetModalLabel">Potwierdzenie usunięcia danych</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zamknij"></button>
+            </div>
+            <div class="modal-body">
+                <p>Czy na pewno chcesz usunąć <strong>wszystkie dane klimatyczne</strong> (czujnik i pogoda)?</p>
+                <p class="text-danger fw-bold">Tej operacji nie można cofnąć.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <form asp-action="ResetAllData" asp-controller="ClimateImport" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Tak, usuń wszystkie dane</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
