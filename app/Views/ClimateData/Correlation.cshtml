@@ -1,0 +1,123 @@
+@model _10xPV.Models.Correlation.CorrelationViewModel
+@{
+    ViewData["Title"] = "Korelacja danych";
+}
+
+<h1 class="mb-4">Korelacja danych klimatycznych</h1>
+
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link" asp-action="Sensor" asp-controller="ClimateData">Czujnik</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-action="Weather" asp-controller="ClimateData">Pogoda</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" asp-action="Correlation" asp-controller="ClimateData">Korelacja</a>
+    </li>
+</ul>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger" role="alert">
+        @foreach (var modelError in ViewData.ModelState.Values.SelectMany(value => value.Errors))
+        {
+            <div>@modelError.ErrorMessage</div>
+        }
+    </div>
+}
+
+<form method="get" asp-action="Correlation" asp-controller="ClimateData" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label class="form-label" for="from">Od</label>
+        <input id="from" type="date" name="from" class="form-control" value="@(Model.From?.ToString("yyyy-MM-dd"))" />
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label" for="to">Do</label>
+        <input id="to" type="date" name="to" class="form-control" value="@(Model.To?.ToString("yyyy-MM-dd"))" />
+    </div>
+
+    <div class="col-md-3 d-flex align-items-end gap-2">
+        <button type="submit" class="btn btn-primary">Oblicz korelację</button>
+        <a asp-action="Correlation" asp-controller="ClimateData" class="btn btn-outline-secondary">Wyczyść</a>
+    </div>
+</form>
+
+@if (Model.HasResults)
+{
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Czujnik → oś pogody</h5>
+                    <p class="mb-1"><strong>Punkty interpolowane:</strong> @Model.SensorMetadata?.InterpolatedCount</p>
+                    <p class="mb-1"><strong>Punkty odrzucone:</strong> @Model.SensorMetadata?.DroppedCount</p>
+                    <p class="mb-0"><strong>Poza zakresem:</strong> @Model.SensorMetadata?.OutOfRangeCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Pogoda → oś czujnika</h5>
+                    <p class="mb-1"><strong>Punkty interpolowane:</strong> @Model.WeatherMetadata?.InterpolatedCount</p>
+                    <p class="mb-1"><strong>Punkty odrzucone:</strong> @Model.WeatherMetadata?.DroppedCount</p>
+                    <p class="mb-0"><strong>Poza zakresem:</strong> @Model.WeatherMetadata?.OutOfRangeCount</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4>Wyniki interpolacji — Czujnik na osi pogody</h4>
+    <div class="table-responsive mb-4">
+        <table class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Temperatura [°C]</th>
+                    <th>Interpolowana</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var point in Model.SensorPoints)
+                {
+                    <tr>
+                        <td>@point.Timestamp.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@(point.Value?.ToString("F2") ?? "—")</td>
+                        <td>@(point.IsInterpolated ? "Tak" : "Nie")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <h4>Wyniki interpolacji — Pogoda na osi czujnika</h4>
+    <div class="table-responsive">
+        <table class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Temperatura [°C]</th>
+                    <th>Interpolowana</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var point in Model.WeatherPoints)
+                {
+                    <tr>
+                        <td>@point.Timestamp.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@(point.Value?.ToString("F2") ?? "—")</td>
+                        <td>@(point.IsInterpolated ? "Tak" : "Nie")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        Brak danych do wyświetlenia. Wybierz zakres dat i kliknij „Oblicz korelację".
+    </div>
+}

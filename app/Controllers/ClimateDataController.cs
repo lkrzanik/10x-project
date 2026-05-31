@@ -1,6 +1,8 @@
 using _10xPV.Data;
 using _10xPV.Models;
 using _10xPV.Models.ClimateImport;
+using _10xPV.Models.Correlation;
+using _10xPV.Services.Correlation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,11 +12,16 @@ public class ClimateDataController : Controller
 {
     private const int DefaultPageSize = 50;
     private readonly AppDbContext _dbContext;
+    private readonly IClimateCorrelationService _correlationService;
     private readonly ILogger<ClimateDataController> _logger;
 
-    public ClimateDataController(AppDbContext dbContext, ILogger<ClimateDataController> logger)
+    public ClimateDataController(
+        AppDbContext dbContext,
+        IClimateCorrelationService correlationService,
+        ILogger<ClimateDataController> logger)
     {
         _dbContext = dbContext;
+        _correlationService = correlationService;
         _logger = logger;
     }
 
@@ -42,6 +49,63 @@ public class ClimateDataController : Controller
         CancellationToken cancellationToken = default)
     {
         return RenderPageAsync(DataSource.Weather, nameof(Weather), from, to, page, cancellationToken);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Correlation(
+        DateOnly? from = null,
+        DateOnly? to = null,
+        CancellationToken cancellationToken = default)
+    {
+        var viewModel = new CorrelationViewModel { From = from, To = to };
+
+        if (from.HasValue && to.HasValue && from > to)
+        {
+            ModelState.AddModelError(string.Empty, "Data początkowa nie może być późniejsza niż data końcowa.");
+            return View(viewModel);
+        }
+
+        try
+        {
+            var sensorQuery = _dbContext.SensorReadings.AsNoTracking();
+            var weatherQuery = _dbContext.WeatherReadings.AsNoTracking();
+
+            sensorQuery = ApplyDateFilter(sensorQuery, from, to);
+            weatherQuery = ApplyDateFilter(weatherQuery, from, to);
+
+            var sensorPoints = await sensorQuery
+                .Where(r => r.Temperature != null)
+                .OrderBy(r => r.Timestamp)
+                .Select(r => new ClimateSeriesPoint(r.Timestamp, r.Temperature))
+                .ToListAsync(cancellationToken);
+
+            var weatherPoints = await weatherQuery
+                .Where(r => r.Temperature != null)
+                .OrderBy(r => r.Timestamp)
+                .Select(r => new ClimateSeriesPoint(r.Timestamp, r.Temperature))
+                .ToListAsync(cancellationToken);
+
+            // Use weather timeline as reference, interpolate sensor onto it
+            var weatherTimeline = weatherPoints.Select(p => p.Timestamp).ToList();
+            var sensorTimeline = sensorPoints.Select(p => p.Timestamp).ToList();
+
+            var sensorResult = _correlationService.AlignToReferenceTimeline(sensorPoints, weatherTimeline);
+            var weatherResult = _correlationService.AlignToReferenceTimeline(weatherPoints, sensorTimeline);
+
+            viewModel.SensorPoints = sensorResult.Points;
+            viewModel.WeatherPoints = weatherResult.Points;
+            viewModel.SensorMetadata = sensorResult.Metadata;
+            viewModel.WeatherMetadata = weatherResult.Metadata;
+            viewModel.TotalAlignedPoints = sensorResult.Points.Count + weatherResult.Points.Count;
+            viewModel.HasResults = sensorResult.Points.Count > 0 || weatherResult.Points.Count > 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Błąd podczas obliczania korelacji danych klimatycznych.");
+            ModelState.AddModelError(string.Empty, "Wystąpił błąd podczas obliczania korelacji. Spróbuj ponownie.");
+        }
+
+        return View(viewModel);
     }
 
     private async Task<IActionResult> RenderPageAsync(
