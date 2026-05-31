@@ -43,10 +43,8 @@ Dostarczyć interpolację liniową pomiędzy seriami klimatycznymi (`SensorReadi
 	- Dodać klasę opcji domenowych i bindowanie przez `IOptions<TOptions>`.
 	- Dodać walidację progów przy starcie aplikacji (fail-fast dla wartości spoza zakresu).
 	- Ustawić wartości domyślne (robocze):
-		- `MinTemperatureC = -40`
-		- `MaxTemperatureC = 60`
-		- `MinHumidityPercent = 0`
-		- `MaxHumidityPercent = 100`
+		- `MinTemperatureC = 0`
+		- `MaxTemperatureC = 40`
 
 ## Kryteria sukcesu
 - Interpolacja zwraca deterministyczne wyniki dla danych wewnątrz zakresu czasu.

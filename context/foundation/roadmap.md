@@ -79,6 +79,18 @@ Pionowe wycinki (vertical-first). Każdy kamień milowy dostarcza widoczny dla u
 
 ---
 
+## Milestone 4 — Usprawnienia aplikacji
+
+**Cel:** Poprawki i udoskonalenia wynikające z użytkowania aplikacji.
+
+| ID | Element | Zakres |
+|----|---------|--------|
+| M4-1 | Usuwanie wszystkich danych klimatycznych | Akcja "reset" — czyszczenie tabel `SensorReading` i `WeatherReading`, potwierdzenie w UI |
+
+**Zależności:** M1
+
+---
+
 ## Pola przekazania do backlogu
 
 Każdy element (`E0-x`, `M1-x`, …) staje się kandydatem na `context/changes/<change-id>/` tworzony via `/10x-new` w momencie rozpoczęcia implementacji.

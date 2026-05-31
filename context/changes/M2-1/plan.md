@@ -97,10 +97,8 @@ Zakres:
 - Dodać klasę opcji domenowych i bindowanie przez `IOptions<TOptions>`.
 - Dodać walidację wartości progów przy starcie aplikacji (fail-fast dla wartości spoza dopuszczalnego zakresu).
 - Ustawić wartości domyślne (robocze):
-  - `MinTemperatureC = -40`
-  - `MaxTemperatureC = 60`
-  - `MinHumidityPercent = 0`
-  - `MaxHumidityPercent = 100`
+  - `MinTemperatureC = 0`
+  - `MaxTemperatureC = 40`
 
 Definition of Done (Faza 3):
 - Progi są konfigurowalne przez `appsettings.json` i poprawnie zbindowane do opcji.

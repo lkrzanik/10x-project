@@ -35,10 +35,8 @@ Roadmap Milestone 2, element M2-1 ([context/foundation/roadmap.md](context/found
 
 ## Threshold defaults (working)
 
-- `MinTemperatureC = -40`
-- `MaxTemperatureC = 60`
-- `MinHumidityPercent = 0`
-- `MaxHumidityPercent = 100`
+- `MinTemperatureC = 0`
+- `MaxTemperatureC = 40`
 
 ## Open question
 
