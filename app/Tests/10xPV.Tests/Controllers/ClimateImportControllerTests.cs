@@ -1,11 +1,13 @@
 using _10xPV.Controllers;
 using _10xPV.Models.ClimateImport;
+using _10xPV.Services;
 using _10xPV.Services.ClimateImport;
 using _10xPV.Services.Csv;
 using _10xPV.Services.Csv.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 
 namespace _10xPV.Tests.Controllers;
 
@@ -150,7 +152,7 @@ public class ClimateImportControllerTests
         Func<Stream, CsvSchemaType, CancellationToken, Task<CsvImportResult>>? importAsync = null)
     {
         var orchestrator = new FakeClimateImportOrchestrator(importAsync ?? ((_, schemaType, _) => Task.FromResult(CsvImportResult.Empty(schemaType))));
-        return new ClimateImportController(orchestrator, NullLogger<ClimateImportController>.Instance);
+        return new ClimateImportController(orchestrator, Mock.Of<IClimateDataResetService>(), NullLogger<ClimateImportController>.Instance);
     }
 
     private static IFormFile CreateFormFile(string fileName, string content)

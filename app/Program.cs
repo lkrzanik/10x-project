@@ -45,6 +45,7 @@ builder.Services.AddScoped<IClimateCorrelationService, ClimateCorrelationService
 builder.Services.AddScoped<ICsvImportService, CsvImportService>();
 builder.Services.AddScoped<IClimateImportPersistenceAdapter, ClimateImportPersistenceAdapter>();
 builder.Services.AddScoped<IClimateImportOrchestrator, ClimateImportOrchestrator>();
+builder.Services.AddScoped<IClimateDataResetService, ClimateDataResetService>();
 
 var app = builder.Build();
 
