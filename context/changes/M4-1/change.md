@@ -12,13 +12,28 @@ Roadmap Milestone 4, element M4-1 ([context/foundation/roadmap.md](context/found
 
 ## Status
 
-⚪ Not started
+✅ Done
 
 ## Progress
 
-- [ ] F1 — Serwis resetowania danych + DI + testy jednostkowe
-- [ ] F2 — Integracja MVC (akcja + widok potwierdzenia) + testy kontrolera
+- [x] F1 — Serwis resetowania danych + DI + testy jednostkowe
+- [x] F2 — Integracja MVC (akcja + widok potwierdzenia) + testy kontrolera
 
 ## Key decisions
 
-_Do uzupełnienia w trakcie implementacji._
+1. Przycisk "Wyczyść wszystkie dane" umieszczony na stronie Import (`ClimateImport/Index`), nie na osobnej stronie.
+2. Potwierdzenie przez modal Bootstrap przed wysłaniem POST.
+3. Dedykowany serwis `IClimateDataResetService` / `ClimateDataResetService` z metodą `DeleteAllAsync()` usuwającą oba zbiory danych jednocześnie (`ExecuteDeleteAsync`).
+4. Akcja POST `ResetAllData` w `ClimateImportController` z atrybutami `[Authorize]` + `[ValidateAntiForgeryToken]`.
+5. Feedback użytkownika przez TempData (alert success/error) po przekierowaniu na stronę importu.
+
+## Files changed
+
+- `app/Services/IClimateDataResetService.cs` — interfejs
+- `app/Services/ClimateDataResetService.cs` — implementacja
+- `app/Program.cs` — rejestracja DI
+- `app/Controllers/ClimateImportController.cs` — akcja `ResetAllData` (POST)
+- `app/Views/ClimateImport/Index.cshtml` — przycisk + modal + alerty TempData
+- `app/Tests/10xPV.Tests/Services/ClimateDataResetServiceTests.cs` — testy serwisu
+- `app/Tests/10xPV.Tests/Controllers/ClimateImportControllerTests.cs` — aktualizacja CreateSut
+- `app/Tests/10xPV.Tests/10xPV.Tests.csproj` — dodano pakiet Moq
