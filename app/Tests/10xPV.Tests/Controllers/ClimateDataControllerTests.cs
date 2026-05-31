@@ -2,6 +2,7 @@ using _10xPV.Controllers;
 using _10xPV.Data;
 using _10xPV.Models;
 using _10xPV.Models.ClimateImport;
+using _10xPV.Services.Correlation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -182,7 +183,8 @@ public class ClimateDataControllerTests
 
     private static ClimateDataController CreateSut(AppDbContext dbContext)
     {
-        return new ClimateDataController(dbContext, NullLogger<ClimateDataController>.Instance);
+        var correlationService = new ClimateCorrelationService();
+        return new ClimateDataController(dbContext, correlationService, NullLogger<ClimateDataController>.Instance);
     }
 
     private static AppDbContext CreateDbContext()

@@ -11,6 +11,15 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Bind and validate correlation options (fail-fast on invalid thresholds)
+builder.Services.AddOptions<CorrelationOptions>()
+    .Bind(builder.Configuration.GetSection(CorrelationOptions.SectionName))
+    .ValidateDataAnnotations()
+    .Validate(opts =>
+    {
+        return opts.MinTemperatureC < opts.MaxTemperatureC;
+    }, "MinTemperatureC must be less than MaxTemperatureC.")
+    .ValidateOnStart();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
