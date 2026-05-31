@@ -15,16 +15,18 @@ Roadmap Milestone 2, element M2-1 ([context/foundation/roadmap.md](context/found
 
 ## Status
 
-🟡 In progress (F1 completed)
+✅ Done
 
 ## Progress
 
 - [x] F1 — Serwis interpolacji + DI + testy jednostkowe
-- [ ] F2 — Integracja MVC (akcja + widok) + testy kontrolera
-- [ ] F3 — Konfiguracja progów (`appsettings` + `IOptions` + walidacja fail-fast)
+- [x] F2 — Integracja MVC (akcja + widok) + testy kontrolera
+- [x] F3 — Konfiguracja progów (`appsettings` + `IOptions` + walidacja fail-fast)
 
 ### Latest update
 
+- 2026-06-01: F3 zakończona. Dodano `CorrelationOptions` z `[Range]` + walidacją krzyżową, sekcję `Correlation` w `appsettings.json`, rejestrację `IOptions` z `ValidateOnStart()`; quality gates: `dotnet build` PASS, `dotnet test` PASS (34/34).
+- 2026-05-29: F2 zakończona. Dodano akcję `Correlation` w `ClimateDataController`, widok Razor + testy kontrolera (34/34).
 - 2026-05-29: F1 zakończona. Dodano i zweryfikowano testy `ClimateCorrelationService` (w tym guard clauses dla `null`); quality gates: `dotnet build` PASS, `dotnet test` PASS (29/29).
 
 ## Key decisions (from plan)

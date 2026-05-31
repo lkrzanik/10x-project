@@ -11,8 +11,12 @@ Zmiana: `M2-1`
 ## Status realizacji planu
 
 - ✅ Phase 1 — zakończona (`serwis + DI + testy jednostkowe`)
-- ⏳ Phase 2 — pending (`MVC endpoint/widok + testy kontrolera`)
-- ⏳ Phase 3 — pending (`appsettings + IOptions + fail-fast walidacja`)
+- ✅ Phase 2 — zakończona (`MVC endpoint/widok + testy kontrolera`)
+- ✅ Phase 3 — zakończona (`appsettings + IOptions + fail-fast walidacja`)
+
+Aktualizacja 2026-06-01:
+- Review phase 3: `PASS`
+- Quality gates: `dotnet build` PASS, `dotnet test` PASS (34/34)
 
 Aktualizacja 2026-05-29:
 - Review phase 1: `PASS`
