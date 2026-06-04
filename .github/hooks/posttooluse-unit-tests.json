@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "powershell": ".\\.github\\hooks\\run-unit-tests-on-app-change.ps1",
+        "bash": "pwsh ./.github/hooks/run-unit-tests-on-app-change.ps1",
+        "timeoutSec": 600
+      }
+    ]
+  }
+}
