@@ -1,0 +1,12 @@
+{
+  "name": "10xpv-e2e",
+  "private": true,
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:login": "playwright test app/Tests/e2e/login.spec.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "dotenv": "^17.4.2"
+  }
+}

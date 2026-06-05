@@ -41,6 +41,7 @@
 | 5 | tp-unit-ai-report | Testy jednostkowe: serwis raportu AI (mock OpenAI) + walidacja struktury | R4 | not started |
 | 6 | tp-unit-pdf | Testy jednostkowe: generowanie PDF (mock danych) | R5 | not started |
 | 7 | tp-integration-auth | Testy integracyjne: middleware auth, sesja, timeout | R7 | not started |
+| 8 | tp-e2e-login | Test E2E: logowanie użytkownika i dostęp do chronionego widoku | R7 | not started |
 
 ---
 
@@ -51,6 +52,7 @@
 | Unit | xUnit (`Assert.*`) | Asercje, testy parametryzowane | 2026-06-01 |
 | Mocking | Moq | Mocki serwisów i zależności | 2026-06-01 |
 | Integration | Microsoft.AspNetCore.Mvc.Testing (WebApplicationFactory) | Testy HTTP, in-memory DB | 2026-06-01 |
+| E2E | Playwright | Test przepływu logowania i ochrony tras w przeglądarce | 2026-06-05 |
 | In-memory DB | Microsoft.EntityFrameworkCore.InMemory | Izolacja testów integracyjnych | 2026-06-01 |
 | Coverage | coverlet + ReportGenerator | Raport pokrycia (lokalnie) | 2026-06-01 |
 
@@ -103,6 +105,20 @@ TBD — zobacz §3 Faza 6
 
 ### 6.7 Testy integracyjne auth (Faza 7)
 TBD — zobacz §3 Faza 7
+
+### 6.8 Test E2E logowania (Faza 8)
+
+- **Lokalizacja**:
+	- `app/tests/e2e/login.spec.ts`
+- **Scenariusz**:
+	- Użytkownik niezalogowany przechodzi do strony logowania, podaje poprawne dane i trafia do chronionego widoku (`/ClimateImport` lub inny chroniony endpoint).
+- **Asercje kluczowe**:
+	- Widoczny komunikat potwierdzający zalogowanie lub obecność elementu dostępnego tylko po autoryzacji.
+	- Wejście na chroniony endpoint bez sesji przekierowuje do logowania.
+- **Komenda uruchomienia**:
+	- `npx playwright test app/tests/e2e/login.spec.ts`
+- **Zakres sygnału**:
+	- R7 (kontrola dostępu, poprawne działanie logowania i sesji w przepływie przeglądarkowym)
 
 ---
 

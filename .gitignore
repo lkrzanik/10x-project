@@ -5,3 +5,8 @@
 /app/**/bin
 /app/**/obj
 /app/10xPV.csproj.user
+node_modules/
+.env
+playwright-report/
+.playwright-cli
+test-results/
