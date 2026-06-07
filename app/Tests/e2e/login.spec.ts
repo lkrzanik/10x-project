@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
-const adminEmail = process.env.AdminEmail ?? 'admin@10xpv.local';
-const adminPassword = process.env.AdminPassword ?? 'Dev123!';
+const adminEmail = process.env.AdminEmail;
+const adminPassword = process.env.AdminPassword;
 
 test('R7: login gates protected route and grants access after valid sign-in', async ({ page }) => {
   await page.goto('/');
