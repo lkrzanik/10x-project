@@ -1,9 +1,10 @@
 import { defineConfig } from '@playwright/test';
 import dotenv from 'dotenv';
+import path from 'node:path';
 
-dotenv.config({ quiet: true });
+dotenv.config({ path: path.join(__dirname, '.env'), quiet: true });
 
-const baseUrl = process.env.AppUrl;
+const baseUrl = process.env.AppUrl ?? 'https://localhost:3333';
 const adminEmail = process.env.AdminEmail;
 const adminPassword = process.env.AdminPassword;
 
@@ -22,6 +23,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'dotnet run --project app/10xPV.csproj',
+    cwd: __dirname,
     url: baseUrl,
     ignoreHTTPSErrors: true,
     timeout: 120_000,
