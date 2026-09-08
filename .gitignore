@@ -10,3 +10,4 @@ node_modules/
 playwright-report/
 .playwright-cli
 test-results/
+/app/Tests/.github
