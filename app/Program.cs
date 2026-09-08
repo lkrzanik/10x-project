@@ -20,6 +20,11 @@ builder.Services.AddOptions<CorrelationOptions>()
         return opts.MinTemperatureC < opts.MaxTemperatureC;
     }, "MinTemperatureC must be less than MaxTemperatureC.")
     .ValidateOnStart();
+
+builder.Services.AddOptions<ExtremeDetectionOptions>()
+    .Bind(builder.Configuration.GetSection(ExtremeDetectionOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -51,6 +56,9 @@ builder.Services.AddControllersWithViews(opts =>
 builder.Services.AddScoped<IClimateDataValidator, ClimateDataValidator>();
 builder.Services.AddScoped<IDeduplicationService, DeduplicationService>();
 builder.Services.AddScoped<IClimateCorrelationService, ClimateCorrelationService>();
+builder.Services.AddScoped<IClimateExtremeDetectionService>(serviceProvider =>
+    new ClimateExtremeDetectionService(
+        serviceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<ExtremeDetectionOptions>>().Value));
 builder.Services.AddScoped<ICsvImportService, CsvImportService>();
 builder.Services.AddScoped<IClimateImportPersistenceAdapter, ClimateImportPersistenceAdapter>();
 builder.Services.AddScoped<IClimateImportOrchestrator, ClimateImportOrchestrator>();

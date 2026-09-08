@@ -11,4 +11,6 @@ public class CorrelationViewModel
     public ClimateCorrelationMetadata? WeatherMetadata { get; set; }
     public int TotalAlignedPoints { get; set; }
     public bool HasResults { get; set; }
+    public IReadOnlyList<ClimateExtreme> Extremes { get; set; } = [];
+    public bool HasExtremes => Extremes.Count > 0;
 }

@@ -13,15 +13,18 @@ public class ClimateDataController : Controller
     private const int DefaultPageSize = 50;
     private readonly AppDbContext _dbContext;
     private readonly IClimateCorrelationService _correlationService;
+    private readonly IClimateExtremeDetectionService _extremeDetectionService;
     private readonly ILogger<ClimateDataController> _logger;
 
     public ClimateDataController(
         AppDbContext dbContext,
         IClimateCorrelationService correlationService,
+        IClimateExtremeDetectionService extremeDetectionService,
         ILogger<ClimateDataController> logger)
     {
         _dbContext = dbContext;
         _correlationService = correlationService;
+        _extremeDetectionService = extremeDetectionService;
         _logger = logger;
     }
 
@@ -84,6 +87,29 @@ public class ClimateDataController : Controller
                 .OrderBy(r => r.Timestamp)
                 .Select(r => new ClimateSeriesPoint(r.Timestamp, r.Temperature))
                 .ToListAsync(cancellationToken);
+
+            var sensorExtremeRows = await sensorQuery
+                .Select(r => new { r.Timestamp, r.Temperature, r.Humidity })
+                .ToListAsync(cancellationToken);
+
+            var weatherExtremeRows = await weatherQuery
+                .Select(r => new { r.Timestamp, r.Temperature, r.Humidity, r.CloudCover })
+                .ToListAsync(cancellationToken);
+
+            var extremeInputs = sensorExtremeRows
+                .SelectMany(row => new[]
+                {
+                    new ClimateExtremeInput(row.Timestamp, ClimateExtremeParameter.Temperature, row.Temperature, ClimateExtremeSource.Sensor),
+                    new ClimateExtremeInput(row.Timestamp, ClimateExtremeParameter.Humidity, row.Humidity, ClimateExtremeSource.Sensor)
+                })
+                .Concat(weatherExtremeRows.SelectMany(row => new[]
+                {
+                    new ClimateExtremeInput(row.Timestamp, ClimateExtremeParameter.Temperature, row.Temperature, ClimateExtremeSource.Weather),
+                    new ClimateExtremeInput(row.Timestamp, ClimateExtremeParameter.Humidity, row.Humidity, ClimateExtremeSource.Weather),
+                    new ClimateExtremeInput(row.Timestamp, ClimateExtremeParameter.CloudCover, row.CloudCover, ClimateExtremeSource.Weather)
+                }));
+
+            viewModel.Extremes = _extremeDetectionService.Detect(extremeInputs);
 
             // Use weather timeline as reference, interpolate sensor onto it
             var weatherTimeline = weatherPoints.Select(p => p.Timestamp).ToList();

@@ -184,7 +184,12 @@ public class ClimateDataControllerTests
     private static ClimateDataController CreateSut(AppDbContext dbContext)
     {
         var correlationService = new ClimateCorrelationService();
-        return new ClimateDataController(dbContext, correlationService, NullLogger<ClimateDataController>.Instance);
+        var extremeDetectionService = new ClimateExtremeDetectionService(new ExtremeDetectionOptions());
+        return new ClimateDataController(
+            dbContext,
+            correlationService,
+            extremeDetectionService,
+            NullLogger<ClimateDataController>.Instance);
     }
 
     private static AppDbContext CreateDbContext()

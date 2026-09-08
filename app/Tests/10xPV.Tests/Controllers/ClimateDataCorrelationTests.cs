@@ -29,6 +29,38 @@ public class ClimateDataCorrelationTests
         Assert.True(model.HasResults);
         Assert.NotNull(model.SensorMetadata);
         Assert.NotNull(model.WeatherMetadata);
+        Assert.False(model.HasExtremes);
+    }
+
+    [Fact]
+    public async Task Correlation_WithExtremeTemperature_ReturnsExtremeInViewModel()
+    {
+        await using var dbContext = CreateDbContext();
+        SeedData(dbContext);
+        dbContext.SensorReadings.Add(new SensorReading
+        {
+            Id = Guid.NewGuid(),
+            Timestamp = new DateTimeOffset(2026, 1, 2, 6, 0, 0, TimeSpan.Zero),
+            Temperature = 41.0,
+            Humidity = 50.0
+        });
+        await dbContext.SaveChangesAsync();
+
+        var sut = CreateSut(dbContext);
+
+        var result = await sut.Correlation(
+            from: new DateOnly(2026, 1, 1),
+            to: new DateOnly(2026, 1, 3));
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<CorrelationViewModel>(viewResult.Model);
+
+        var extreme = Assert.Single(model.Extremes);
+        Assert.True(model.HasExtremes);
+        Assert.Equal(ClimateExtremeParameter.Temperature, extreme.Parameter);
+        Assert.Equal(41.0, extreme.Value);
+        Assert.Equal(ClimateExtremeDirection.AboveMaximum, extreme.Direction);
+        Assert.Equal(ClimateExtremeSource.Sensor, extreme.Source);
     }
 
     [Fact]
@@ -121,7 +153,12 @@ public class ClimateDataCorrelationTests
     private static ClimateDataController CreateSut(AppDbContext dbContext)
     {
         var correlationService = new ClimateCorrelationService();
-        return new ClimateDataController(dbContext, correlationService, NullLogger<ClimateDataController>.Instance);
+        var extremeDetectionService = new ClimateExtremeDetectionService(new ExtremeDetectionOptions());
+        return new ClimateDataController(
+            dbContext,
+            correlationService,
+            extremeDetectionService,
+            NullLogger<ClimateDataController>.Instance);
     }
 
     private static AppDbContext CreateDbContext()
