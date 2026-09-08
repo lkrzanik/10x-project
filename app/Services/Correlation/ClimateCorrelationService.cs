@@ -62,6 +62,42 @@ public class ClimateCorrelationService : IClimateCorrelationService
 
         var exactPoints = normalizedPoints.ToDictionary(point => point.Timestamp, point => point.Value!.Value);
 
+        if (ShouldApplyDailyBucketAlignment(normalizedPoints, referenceList))
+        {
+            var valueByDate = normalizedPoints.ToDictionary(point => point.Timestamp.Date, point => point.Value!.Value);
+            var minDate = normalizedPoints[0].Timestamp.Date;
+            var maxDate = normalizedPoints[^1].Timestamp.Date;
+
+            var dailyAlignedPoints = new List<ClimateCorrelationAlignedPoint>(referenceList.Count);
+            var dailyOutOfRangeCount = 0;
+
+            foreach (var timestamp in referenceList)
+            {
+                if (valueByDate.TryGetValue(timestamp.Date, out var exactValue))
+                {
+                    dailyAlignedPoints.Add(new ClimateCorrelationAlignedPoint(timestamp, exactValue, IsInterpolated: false));
+                    continue;
+                }
+
+                if (timestamp.Date < minDate || timestamp.Date > maxDate)
+                {
+                    dailyAlignedPoints.Add(new ClimateCorrelationAlignedPoint(timestamp, Value: null, IsInterpolated: false));
+                    dailyOutOfRangeCount++;
+                    continue;
+                }
+
+                dailyAlignedPoints.Add(new ClimateCorrelationAlignedPoint(timestamp, Value: null, IsInterpolated: false));
+                dailyOutOfRangeCount++;
+            }
+
+            return new ClimateCorrelationResult(
+                Points: dailyAlignedPoints,
+                Metadata: new ClimateCorrelationMetadata(
+                    InterpolatedCount: 0,
+                    DroppedCount: droppedCount,
+                    OutOfRangeCount: dailyOutOfRangeCount));
+        }
+
         var minTimestamp = normalizedPoints[0].Timestamp;
         var maxTimestamp = normalizedPoints[^1].Timestamp;
 
@@ -123,6 +159,35 @@ public class ClimateCorrelationService : IClimateCorrelationService
                 InterpolatedCount: interpolatedCount,
                 DroppedCount: droppedCount,
                 OutOfRangeCount: outOfRangeCount));
+    }
+
+    private static bool ShouldApplyDailyBucketAlignment(
+        IReadOnlyList<ClimateSeriesPoint> points,
+        IReadOnlyList<DateTimeOffset> referenceTimeline)
+    {
+        if (points.Count < 2 || referenceTimeline.Count < 2)
+        {
+            return false;
+        }
+
+        var dailyIntervals = new List<double>(points.Count - 1);
+        for (var index = 1; index < points.Count; index++)
+        {
+            var deltaHours = (points[index].Timestamp - points[index - 1].Timestamp).TotalHours;
+            dailyIntervals.Add(deltaHours);
+        }
+
+        if (dailyIntervals.Count == 0 || dailyIntervals.Any(deltaHours => Math.Abs(deltaHours - 24.0) > 0.5))
+        {
+            return false;
+        }
+
+        var referenceDates = referenceTimeline
+            .GroupBy(timestamp => timestamp.Date)
+            .Select(group => new { Date = group.Key, Count = group.Count() })
+            .ToList();
+
+        return referenceDates.Any(group => group.Count > 1);
     }
 
     private static double ToAxis(DateTimeOffset timestamp)

@@ -62,6 +62,43 @@ public class ClimateCorrelationServiceTests
     }
 
     [Fact]
+    public void AlignToReferenceTimeline_DailySeriesAgainstThirtyMinuteTimeline_UsesStepwiseDailyValue()
+    {
+        var dayOne = new DateTimeOffset(2026, 5, 1, 12, 0, 0, TimeSpan.Zero);
+        var dayTwo = new DateTimeOffset(2026, 5, 2, 12, 0, 0, TimeSpan.Zero);
+
+        var sourceSeries = new[]
+        {
+            new ClimateSeriesPoint(dayOne, 10.0),
+            new ClimateSeriesPoint(dayTwo, 12.0)
+        };
+
+        var referenceTimeline = new[]
+        {
+            new DateTimeOffset(2026, 5, 1, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2026, 5, 1, 12, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2026, 5, 1, 12, 30, 0, TimeSpan.Zero),
+            new DateTimeOffset(2026, 5, 2, 0, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2026, 5, 2, 12, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2026, 5, 2, 12, 30, 0, TimeSpan.Zero)
+        };
+
+        var result = _sut.AlignToReferenceTimeline(sourceSeries, referenceTimeline);
+
+        Assert.Equal(6, result.Points.Count);
+        Assert.Equal(10.0, result.Points[0].Value);
+        Assert.Equal(10.0, result.Points[1].Value);
+        Assert.Equal(10.0, result.Points[2].Value);
+        Assert.Equal(12.0, result.Points[3].Value);
+        Assert.Equal(12.0, result.Points[4].Value);
+        Assert.Equal(12.0, result.Points[5].Value);
+
+        Assert.All(result.Points, point => Assert.False(point.IsInterpolated));
+        Assert.Equal(0, result.Metadata.InterpolatedCount);
+        Assert.Equal(0, result.Metadata.OutOfRangeCount);
+    }
+
+    [Fact]
     public void AlignToReferenceTimeline_EmptySource_ReturnsEmptyResultWithZeroMetadata()
     {
         var referenceTimeline = new[]
