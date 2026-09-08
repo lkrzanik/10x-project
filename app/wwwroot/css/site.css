@@ -32,3 +32,56 @@ body {
 }
 
 /* Sticky footer handled by flex utilities in _Layout.cshtml */
+
+.correlation-chart-wrapper {
+  height: clamp(260px, 35vw, 380px);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.375rem;
+  background: var(--bs-body-bg);
+}
+
+.correlation-chart-wrapper canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.correlation-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.correlation-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.correlation-legend-swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+}
+
+.correlation-legend-swatch-sensor {
+  background: #0d6efd;
+}
+
+.correlation-legend-swatch-weather {
+  background: #198754;
+}
+
+.correlation-table-wrapper {
+  max-height: 32rem;
+  overflow: auto;
+}
+
+.correlation-table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bs-body-bg);
+  z-index: 1;
+}

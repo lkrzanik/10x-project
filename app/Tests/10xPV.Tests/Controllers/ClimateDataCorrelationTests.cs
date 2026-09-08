@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace _10xPV.Tests.Controllers;
 
-public class ClimateDataCorrelationTests
+public class ClimateCorrelationControllerTests
 {
     [Fact]
     public async Task Correlation_WithValidData_ReturnsViewWithCorrelationResults()
@@ -29,6 +29,25 @@ public class ClimateDataCorrelationTests
         Assert.True(model.HasResults);
         Assert.NotNull(model.SensorMetadata);
         Assert.NotNull(model.WeatherMetadata);
+        var expectedTimestamps = model.SensorPoints
+            .Select(point => point.Timestamp)
+            .Union(model.WeatherPoints.Select(point => point.Timestamp))
+            .OrderBy(timestamp => timestamp)
+            .ToList();
+
+        Assert.Equal(expectedTimestamps, model.TableRows.Select(row => row.Timestamp));
+        foreach (var row in model.TableRows)
+        {
+            var sensorPoint = model.SensorPoints.SingleOrDefault(point => point.Timestamp == row.Timestamp);
+            var weatherPoint = model.WeatherPoints.SingleOrDefault(point => point.Timestamp == row.Timestamp);
+
+            Assert.Equal(sensorPoint?.Value, row.SensorValue);
+            Assert.Equal(sensorPoint?.IsInterpolated ?? false, row.SensorIsInterpolated);
+            Assert.Equal(weatherPoint?.Value, row.WeatherValue);
+            Assert.Equal(weatherPoint?.IsInterpolated ?? false, row.WeatherIsInterpolated);
+        }
+
+        Assert.Contains(model.TableRows, row => row.SensorIsInterpolated);
         Assert.False(model.HasExtremes);
     }
 
@@ -76,6 +95,7 @@ public class ClimateDataCorrelationTests
 
         Assert.False(model.HasResults);
         Assert.Equal(0, model.TotalAlignedPoints);
+        Assert.Empty(model.TableRows);
     }
 
     [Fact]
@@ -150,15 +170,15 @@ public class ClimateDataCorrelationTests
         dbContext.SaveChanges();
     }
 
-    private static ClimateDataController CreateSut(AppDbContext dbContext)
+    private static ClimateCorrelationController CreateSut(AppDbContext dbContext)
     {
         var correlationService = new ClimateCorrelationService();
         var extremeDetectionService = new ClimateExtremeDetectionService(new ExtremeDetectionOptions());
-        return new ClimateDataController(
+        return new ClimateCorrelationController(
             dbContext,
             correlationService,
             extremeDetectionService,
-            NullLogger<ClimateDataController>.Instance);
+            NullLogger<ClimateCorrelationController>.Instance);
     }
 
     private static AppDbContext CreateDbContext()

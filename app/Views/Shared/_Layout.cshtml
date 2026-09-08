@@ -11,8 +11,10 @@
     @{
         var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
         var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
         var isImportActive = string.Equals(currentController, "ClimateImport", StringComparison.OrdinalIgnoreCase);
         var isClimateDataActive = string.Equals(currentController, "ClimateData", StringComparison.OrdinalIgnoreCase);
+        var isCorrelationActive = string.Equals(currentController, "ClimateCorrelation", StringComparison.OrdinalIgnoreCase);
     }
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -36,6 +38,12 @@
                                asp-controller="ClimateData"
                                asp-action="Sensor"
                                aria-current="@(isClimateDataActive ? "page" : null)">Dane</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(isCorrelationActive ? "active" : string.Empty)"
+                                         asp-controller="ClimateCorrelation"
+                               asp-action="Correlation"
+                               aria-current="@(isCorrelationActive ? "page" : null)">Korelacja</a>
                         </li>
                     </ul>
                 }

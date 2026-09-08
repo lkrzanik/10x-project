@@ -7,6 +7,7 @@ public class CorrelationViewModel
     public string Parameter { get; set; } = "Temperature";
     public IReadOnlyList<ClimateCorrelationAlignedPoint> SensorPoints { get; set; } = [];
     public IReadOnlyList<ClimateCorrelationAlignedPoint> WeatherPoints { get; set; } = [];
+    public IReadOnlyList<CorrelationTableRowViewModel> TableRows { get; set; } = [];
     public ClimateCorrelationMetadata? SensorMetadata { get; set; }
     public ClimateCorrelationMetadata? WeatherMetadata { get; set; }
     public int TotalAlignedPoints { get; set; }

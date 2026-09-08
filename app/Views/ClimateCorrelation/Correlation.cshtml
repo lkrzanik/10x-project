@@ -15,7 +15,7 @@
     </div>
 }
 
-<form method="get" asp-action="Correlation" asp-controller="ClimateData" class="row g-3 mb-4">
+<form method="get" asp-action="Correlation" asp-controller="ClimateCorrelation" class="row g-3 mb-4">
     <div class="col-md-3">
         <label class="form-label" for="from">Od</label>
         <input id="from" type="date" name="from" class="form-control" value="@(Model.From?.ToString("yyyy-MM-dd"))" />
@@ -28,7 +28,7 @@
 
     <div class="col-md-3 d-flex align-items-end gap-2">
         <button type="submit" class="btn btn-primary">Oblicz korelację</button>
-        <a asp-action="Correlation" asp-controller="ClimateData" class="btn btn-outline-secondary">Wyczyść</a>
+        <a asp-action="Correlation" asp-controller="ClimateCorrelation" class="btn btn-outline-secondary">Wyczyść</a>
     </div>
 </form>
 

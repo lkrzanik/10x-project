@@ -16,4 +16,5 @@ test('R7: login gates protected route and grants access after valid sign-in', as
   await expect(page).toHaveURL(/\/$|\/Home\/Index/);
   await expect(page.getByRole('heading', { name: 'Witaj w 10xPV' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Wyloguj' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Korelacja' })).toHaveAttribute('href', '/ClimateCorrelation/Correlation');
 });
