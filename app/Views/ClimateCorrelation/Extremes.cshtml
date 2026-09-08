@@ -1,0 +1,103 @@
+@model _10xPV.Models.Correlation.ClimateExtremeViewModel
+@{
+    ViewData["Title"] = "Ekstrema danych";
+}
+
+<h1 class="mb-4">Ekstrema danych klimatycznych</h1>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger" role="alert">
+        @foreach (var modelError in ViewData.ModelState.Values.SelectMany(value => value.Errors))
+        {
+            <div>@modelError.ErrorMessage</div>
+        }
+    </div>
+}
+
+<form method="get" asp-action="Extremes" asp-controller="ClimateCorrelation" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label class="form-label" for="from">Od</label>
+        <input id="from" type="date" name="from" class="form-control" value="@(Model.From?.ToString("yyyy-MM-dd"))" />
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label" for="to">Do</label>
+        <input id="to" type="date" name="to" class="form-control" value="@(Model.To?.ToString("yyyy-MM-dd"))" />
+    </div>
+
+    <div class="col-md-3 d-flex align-items-end gap-2">
+        <button type="submit" class="btn btn-primary">Pokaż ekstrema</button>
+        <a asp-action="Extremes" asp-controller="ClimateCorrelation" class="btn btn-outline-secondary">Wyczyść</a>
+    </div>
+</form>
+
+@if (Model.HasResults)
+{
+    var totalExtremes = Model.Extremes.Count;
+    var uniqueParameters = Model.Extremes.Select(extreme => extreme.Parameter).Distinct().Count();
+    var firstTimestamp = Model.Extremes.Min(extreme => extreme.Timestamp);
+    var lastTimestamp = Model.Extremes.Max(extreme => extreme.Timestamp);
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small text-uppercase">Łącznie</div>
+                    <div class="display-6 mb-0">@totalExtremes</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small text-uppercase">Parametry</div>
+                    <div class="display-6 mb-0">@uniqueParameters</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small text-uppercase">Zakres</div>
+                    <div class="fs-6 mb-0">@firstTimestamp.ToString("yyyy-MM-dd") – @lastTimestamp.ToString("yyyy-MM-dd")</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="extremes-table-wrapper">
+        <table class="table table-striped table-sm align-middle mb-0">
+            <caption class="visually-hidden">Lista ekstremów danych klimatycznych</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Timestamp</th>
+                    <th scope="col">Źródło</th>
+                    <th scope="col">Parametr</th>
+                    <th scope="col">Wartość</th>
+                    <th scope="col">Przekroczenie</th>
+                    <th scope="col">Próg</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var extreme in Model.Extremes)
+                {
+                    <tr>
+                        <td>@extreme.Timestamp.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@extreme.Source</td>
+                        <td>@extreme.Parameter</td>
+                        <td>@extreme.Value.ToString("F2")</td>
+                        <td>@extreme.Direction</td>
+                        <td>@extreme.Threshold.ToString("F2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info" role="status">
+        Brak ekstremów w wybranym zakresie dat.
+    </div>
+}

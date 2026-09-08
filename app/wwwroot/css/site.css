@@ -85,3 +85,22 @@ body {
   background: var(--bs-body-bg);
   z-index: 1;
 }
+
+.extremes-table-wrapper {
+  max-height: 32rem;
+  overflow: auto;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  background: var(--bs-body-bg);
+}
+
+.extremes-table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bs-body-bg);
+  z-index: 1;
+}
+
+.extremes-table-wrapper .table {
+  margin-bottom: 0;
+}

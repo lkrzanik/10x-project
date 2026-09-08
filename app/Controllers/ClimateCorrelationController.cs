@@ -106,6 +106,60 @@ public class ClimateCorrelationController : Controller
         return View(viewModel);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Extremes(
+        DateOnly? from = null,
+        DateOnly? to = null,
+        CancellationToken cancellationToken = default)
+    {
+        var viewModel = new ClimateExtremeViewModel { From = from, To = to };
+
+        if (from.HasValue && to.HasValue && from > to)
+        {
+            ModelState.AddModelError(string.Empty, "Data początkowa nie może być późniejsza niż data końcowa.");
+            return View(viewModel);
+        }
+
+        try
+        {
+            var query = _dbContext.SensorReadings.AsNoTracking();
+            query = ApplyDateFilter(query, from, to);
+
+            var sensorRows = await query
+                .Select(r => new { r.Timestamp, r.Temperature, r.Humidity })
+                .ToListAsync(cancellationToken);
+
+            var weatherQuery = _dbContext.WeatherReadings.AsNoTracking();
+            weatherQuery = ApplyDateFilter(weatherQuery, from, to);
+
+            var weatherRows = await weatherQuery
+                .Select(r => new { r.Timestamp, r.Temperature, r.Humidity, r.CloudCover })
+                .ToListAsync(cancellationToken);
+
+            var extremeInputs = sensorRows
+                .SelectMany(row => new[]
+                {
+                    new ClimateExtremeInput(row.Timestamp, ClimateExtremeParameter.Temperature, row.Temperature, ClimateExtremeSource.Sensor),
+                    new ClimateExtremeInput(row.Timestamp, ClimateExtremeParameter.Humidity, row.Humidity, ClimateExtremeSource.Sensor)
+                })
+                .Concat(weatherRows.SelectMany(row => new[]
+                {
+                    new ClimateExtremeInput(row.Timestamp, ClimateExtremeParameter.Temperature, row.Temperature, ClimateExtremeSource.Weather),
+                    new ClimateExtremeInput(row.Timestamp, ClimateExtremeParameter.Humidity, row.Humidity, ClimateExtremeSource.Weather),
+                    new ClimateExtremeInput(row.Timestamp, ClimateExtremeParameter.CloudCover, row.CloudCover, ClimateExtremeSource.Weather)
+                }));
+
+            viewModel.Extremes = _extremeDetectionService.Detect(extremeInputs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Błąd podczas obliczania ekstremów klimatycznych.");
+            ModelState.AddModelError(string.Empty, "Wystąpił błąd podczas odczytu ekstremów. Spróbuj ponownie.");
+        }
+
+        return View(viewModel);
+    }
+
     private static IReadOnlyList<CorrelationTableRowViewModel> BuildCorrelationTableRows(
         IReadOnlyList<ClimateCorrelationAlignedPoint> sensorPoints,
         IReadOnlyList<ClimateCorrelationAlignedPoint> weatherPoints)

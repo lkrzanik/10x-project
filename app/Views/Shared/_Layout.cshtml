@@ -14,7 +14,10 @@
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
         var isImportActive = string.Equals(currentController, "ClimateImport", StringComparison.OrdinalIgnoreCase);
         var isClimateDataActive = string.Equals(currentController, "ClimateData", StringComparison.OrdinalIgnoreCase);
-        var isCorrelationActive = string.Equals(currentController, "ClimateCorrelation", StringComparison.OrdinalIgnoreCase);
+        var isCorrelationActive = string.Equals(currentController, "ClimateCorrelation", StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(currentAction, "Correlation", StringComparison.OrdinalIgnoreCase);
+        var isExtremesActive = string.Equals(currentController, "ClimateCorrelation", StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(currentAction, "Extremes", StringComparison.OrdinalIgnoreCase);
     }
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -41,9 +44,15 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(isCorrelationActive ? "active" : string.Empty)"
-                                         asp-controller="ClimateCorrelation"
+                               asp-controller="ClimateCorrelation"
                                asp-action="Correlation"
                                aria-current="@(isCorrelationActive ? "page" : null)">Korelacja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(isExtremesActive ? "active" : string.Empty)"
+                               asp-controller="ClimateCorrelation"
+                               asp-action="Extremes"
+                               aria-current="@(isExtremesActive ? "page" : null)">Ekstrema</a>
                         </li>
                     </ul>
                 }

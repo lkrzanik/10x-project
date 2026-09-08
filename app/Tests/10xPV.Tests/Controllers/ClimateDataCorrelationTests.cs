@@ -83,6 +83,74 @@ public class ClimateCorrelationControllerTests
     }
 
     [Fact]
+    public async Task Extremes_WithExtremeTemperature_ReturnsDedicatedViewModel()
+    {
+        await using var dbContext = CreateDbContext();
+        SeedData(dbContext);
+        dbContext.SensorReadings.Add(new SensorReading
+        {
+            Id = Guid.NewGuid(),
+            Timestamp = new DateTimeOffset(2026, 1, 2, 6, 0, 0, TimeSpan.Zero),
+            Temperature = 41.0,
+            Humidity = 50.0
+        });
+        await dbContext.SaveChangesAsync();
+
+        var sut = CreateSut(dbContext);
+
+        var result = await sut.Extremes(
+            from: new DateOnly(2026, 1, 1),
+            to: new DateOnly(2026, 1, 3));
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<ClimateExtremeViewModel>(viewResult.Model);
+
+        var extreme = Assert.Single(model.Extremes);
+        Assert.True(model.HasResults);
+        Assert.Equal(ClimateExtremeParameter.Temperature, extreme.Parameter);
+        Assert.Equal(41.0, extreme.Value);
+        Assert.Equal(ClimateExtremeDirection.AboveMaximum, extreme.Direction);
+        Assert.Equal(ClimateExtremeSource.Sensor, extreme.Source);
+    }
+
+    [Fact]
+    public async Task Extremes_WithNoData_ReturnsEmptyState()
+    {
+        await using var dbContext = CreateDbContext();
+        var sut = CreateSut(dbContext);
+
+        var result = await sut.Extremes(
+            from: new DateOnly(2026, 1, 1),
+            to: new DateOnly(2026, 1, 3));
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<ClimateExtremeViewModel>(viewResult.Model);
+
+        Assert.False(model.HasResults);
+        Assert.Empty(model.Extremes);
+    }
+
+    [Fact]
+    public async Task Extremes_WithInvalidDateRange_ReturnsValidationError()
+    {
+        await using var dbContext = CreateDbContext();
+        var sut = CreateSut(dbContext);
+
+        var result = await sut.Extremes(
+            from: new DateOnly(2026, 3, 10),
+            to: new DateOnly(2026, 3, 1));
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        var model = Assert.IsType<ClimateExtremeViewModel>(viewResult.Model);
+
+        Assert.False(sut.ModelState.IsValid);
+        var error = Assert.Single(sut.ModelState[string.Empty]!.Errors);
+        Assert.Equal("Data początkowa nie może być późniejsza niż data końcowa.", error.ErrorMessage);
+        Assert.False(model.HasResults);
+        Assert.Empty(model.Extremes);
+    }
+
+    [Fact]
     public async Task Correlation_WithNoData_ReturnsViewWithoutResults()
     {
         await using var dbContext = CreateDbContext();
